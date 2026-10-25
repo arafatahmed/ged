@@ -1,0 +1,147 @@
+<ged-entete-page
+  [titre]="'compte.titre' | t"
+  [sousTitre]="compte()?.utilisateur?.nom_complet ?? ''"
+  icone="manage_accounts"
+/>
+
+@if (compte(); as c) {
+  <div class="grille">
+    <section class="carte" animate.enter="entree-montee" [style.--rang]="0">
+      <h2><mat-icon>person</mat-icon>{{ 'compte.profil' | t }}</h2>
+      <dl class="fiche">
+        <dt>{{ 'compte.identifiant' | t }}</dt>
+        <dd class="ltr">{{ c.utilisateur.identifiant }}</dd>
+        <dt>{{ 'compte.courriel' | t }}</dt>
+        <dd class="ltr">{{ c.utilisateur.courriel || '—' }}</dd>
+        <dt>{{ 'compte.habilitation' | t }}</dt>
+        <dd>
+          <span class="pastille info">{{ c.utilisateur.niveau_habilitation_libelle }}</span>
+        </dd>
+      </dl>
+      <p class="sous-titre">{{ 'compte.langue' | t }}</p>
+      <mat-button-toggle-group [value]="c.utilisateur.langue" (change)="changerLangue($event.value)">
+        <mat-button-toggle value="">{{ 'compte.langue_institution' | t }}</mat-button-toggle>
+        <mat-button-toggle value="fr" lang="fr">Français</mat-button-toggle>
+        <mat-button-toggle value="ar" lang="ar">العربية</mat-button-toggle>
+      </mat-button-toggle-group>
+      <p>
+        <a mat-stroked-button routerLink="/compte/mot-de-passe"
+          ><mat-icon>password</mat-icon>{{ 'compte.changer_mdp' | t }}</a
+        >
+      </p>
+    </section>
+
+    <section class="carte" animate.enter="entree-montee" [style.--rang]="1">
+      <h2><mat-icon>phonelink_lock</mat-icon>{{ 'compte.mfa' | t }}</h2>
+      @if (c.mfa.active) {
+        <p class="etat succes"><mat-icon>verified</mat-icon>{{ 'compte.mfa_active' | t }}</p>
+        <p class="texte-attenue">{{ 'compte.codes_restants' | t: { nombre: c.mfa.codes_restants } }}</p>
+        <div class="ligne">
+          <button mat-stroked-button (click)="regenererCodes()">
+            <mat-icon>key</mat-icon>{{ 'compte.codes_regenerer' | t }}
+          </button>
+          @if (!c.mfa.obligatoire) {
+            <button mat-button class="danger" (click)="desactiverMfa()">{{ 'action.desactiver' | t }}</button>
+          }
+        </div>
+        @if (c.mfa.obligatoire) {
+          <p class="texte-attenue petit">{{ 'compte.mfa_imposee' | t }}</p>
+        }
+      } @else {
+        <p class="etat avertissement"><mat-icon>gpp_maybe</mat-icon>{{ 'compte.mfa_inactive' | t }}</p>
+        <p class="texte-attenue">{{ 'compte.mfa_conseil' | t }}</p>
+        <a mat-flat-button routerLink="/compte/double-authentification"
+          ><mat-icon>add_moderator</mat-icon>{{ 'mfa.activer' | t }}</a
+        >
+      }
+    </section>
+  </div>
+
+  <section class="carte bloc" animate.enter="entree-montee" [style.--rang]="2">
+    <h2><mat-icon>work</mat-icon>{{ 'compte.affectations' | t }}</h2>
+    @if (c.affectations.length) {
+      <ul class="liste">
+        @for (a of c.affectations; track a.uuid) {
+          <li>
+            <span class="pastille info">{{ a.unite_sigle }}</span>
+            <div>
+              <strong>{{ a.role | bilingue: a.role_ar }}</strong
+              ><span class="texte-attenue"> · {{ a.unite | bilingue: a.unite_ar }}</span>
+            </div>
+            <span class="espace"></span>
+            @if (a.etendue_sous_unites) {
+              <span class="pastille">{{ 'compte.sous_unites' | t }}</span>
+            }
+            <span class="texte-attenue petit">{{
+              a.date_fin ? ('compte.jusqu_au' | t: { date: (a.date_fin | dateLocale) }) : ('compte.sans_echeance' | t)
+            }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <ged-etat-vide icone="work_off" [message]="'compte.aucune_affectation' | t" />
+    }
+  </section>
+
+  <section class="carte bloc" animate.enter="entree-montee" [style.--rang]="3">
+    <div class="ligne">
+      <h2><mat-icon>supervisor_account</mat-icon>{{ 'compte.delegations' | t }}</h2>
+      <span class="espace"></span>
+      <button mat-stroked-button (click)="deleguer()">
+        <mat-icon>person_add</mat-icon>{{ 'compte.deleguer' | t }}
+      </button>
+    </div>
+    @for (d of c.delegations_donnees; track d.uuid) {
+      <div class="delegation" animate.enter="entree-fondu">
+        <mat-icon>arrow_outward</mat-icon>
+        <span>{{
+          'compte.delegation_donnee' | t: { personne: d.delegataire, fin: (d.fin | dateLocale: 'dateHeure') }
+        }}</span>
+        <span class="espace"></span>
+        <button mat-button (click)="revoquer(d.uuid)">{{ 'action.revoquer' | t }}</button>
+      </div>
+    }
+    @for (d of c.delegations_recues; track d.uuid) {
+      <div class="delegation recue" animate.enter="entree-fondu">
+        <mat-icon>call_received</mat-icon>
+        <span>{{
+          'compte.delegation_recue' | t: { personne: d.delegant, fin: (d.fin | dateLocale: 'dateHeure') }
+        }}</span>
+        <span class="espace"></span>
+        <button mat-button (click)="revoquer(d.uuid)">{{ 'action.renoncer' | t }}</button>
+      </div>
+    }
+    @if (!c.delegations_donnees.length && !c.delegations_recues.length) {
+      <p class="texte-attenue">{{ 'compte.aucune_delegation' | t }}</p>
+    }
+  </section>
+
+  <section class="carte bloc" animate.enter="entree-montee" [style.--rang]="4">
+    <div class="ligne">
+      <h2><mat-icon>devices</mat-icon>{{ 'compte.sessions' | t }}</h2>
+      <span class="espace"></span>
+      @if (c.sessions.length > 1) {
+        <button mat-stroked-button (click)="fermerSessions()">
+          <mat-icon>logout</mat-icon>{{ 'compte.fermer_sessions' | t }}
+        </button>
+      }
+    </div>
+    <ul class="liste">
+      @for (s of c.sessions; track s.debut) {
+        <li>
+          <mat-icon class="texte-attenue">{{ s.agent.includes('Mobile') ? 'smartphone' : 'computer' }}</mat-icon>
+          <div>
+            <strong>{{ s.debut | dateLocale: 'dateHeure' }}</strong>
+            <div class="texte-attenue petit ltr">{{ s.adresse_ip || '?' }}</div>
+          </div>
+          <span class="espace"></span>
+          @if (s.courante) {
+            <span class="pastille succes">{{ 'compte.cette_session' | t }}</span>
+          }
+        </li>
+      }
+    </ul>
+  </section>
+} @else {
+  <div class="carte"><ged-squelette [lignes]="6" /></div>
+}

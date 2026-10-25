@@ -1,0 +1,119 @@
+.arbre-carte {
+  margin-top: 16px;
+  padding: 16px 20px;
+}
+.outils {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.recherche {
+  width: min(320px, 100%);
+}
+.arbre,
+.arbre ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.arbre ul {
+  padding-inline-start: 28px;
+  border-inline-start: 2px solid color-mix(in srgb, var(--ged-primaire) 12%, transparent);
+  margin-inline-start: 19px;
+}
+.noeud {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 12px;
+  min-height: 52px;
+  transition: background-color 160ms;
+  &:hover {
+    background: color-mix(in srgb, var(--ged-primaire) 5%, transparent);
+  }
+  &.inactif {
+    opacity: 0.55;
+  }
+}
+.bascule {
+  transition: transform 240ms var(--ged-courbe);
+}
+.bascule.ouverte {
+  transform: rotate(90deg);
+}
+[dir='rtl'] .bascule.ouverte {
+  transform: rotate(-90deg);
+}
+.bascule-vide {
+  width: 40px;
+  flex: none;
+}
+.sigle {
+  min-width: 52px;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  direction: ltr;
+}
+.libelle {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.libelle .texte-attenue {
+  font-size: 12px;
+}
+.enfants {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 280ms var(--ged-courbe);
+}
+.enfants.ouverte {
+  grid-template-rows: 1fr;
+}
+.enfants > ul {
+  overflow: hidden;
+}
+.types {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  margin-top: 16px;
+}
+.type {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  text-align: start;
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--ged-bordure);
+  border-radius: 14px;
+  background: var(--ged-surface);
+  color: inherit;
+}
+.ordre {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #eef1f6;
+  font-weight: 600;
+}
+.type-texte {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  .texte-attenue {
+    font-size: 12px;
+  }
+}

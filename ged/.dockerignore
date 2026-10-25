@@ -1,0 +1,12 @@
+.git
+**/__pycache__
+.env
+media/
+.media-tests/
+staticfiles/
+scellements/
+docker/nginx/certs/
+.coverage
+frontend/node_modules
+frontend/dist
+frontend/.angular

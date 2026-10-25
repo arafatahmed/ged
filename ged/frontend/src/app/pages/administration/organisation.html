@@ -1,0 +1,139 @@
+<ged-entete-page [titre]="'organisation.titre' | t" [sousTitre]="'organisation.sous_titre' | t" icone="account_tree">
+  <button mat-flat-button (click)="editer(null)">
+    <mat-icon>add</mat-icon>{{ 'organisation.nouvelle_unite' | t }}
+  </button>
+</ged-entete-page>
+
+<mat-tab-group animationDuration="250ms" mat-stretch-tabs="false">
+  <mat-tab [label]="'organisation.onglet_unites' | t">
+    <div class="carte arbre-carte" animate.enter="entree-montee">
+      <div class="outils">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="recherche">
+          <mat-icon matPrefix>search</mat-icon>
+          <mat-label>{{ 'action.rechercher' | t }}</mat-label>
+          <input matInput [ngModel]="filtre()" (ngModelChange)="filtre.set($event)" />
+        </mat-form-field>
+        <mat-slide-toggle [checked]="inactives()" (change)="inactives.set($event.checked)">{{
+          'organisation.afficher_inactives' | t
+        }}</mat-slide-toggle>
+        <span class="espace"></span>
+        <button mat-button (click)="toutDeplier(true)">
+          <mat-icon>unfold_more</mat-icon>{{ 'organisation.tout_deplier' | t }}
+        </button>
+        <button mat-button (click)="toutDeplier(false)">
+          <mat-icon>unfold_less</mat-icon>{{ 'organisation.tout_replier' | t }}
+        </button>
+      </div>
+
+      @if (unites() === null) {
+        <ged-squelette [lignes]="6" />
+      } @else if (!arbre().length) {
+        <ged-etat-vide icone="account_tree" [message]="'organisation.aucune' | t" />
+      } @else {
+        <ul class="arbre" role="tree">
+          @for (noeud of arbre(); track noeud.unite.uuid) {
+            <ng-container [ngTemplateOutlet]="branche" [ngTemplateOutletContext]="{ $implicit: noeud, rang: $index }" />
+          }
+        </ul>
+      }
+    </div>
+  </mat-tab>
+
+  @if (session.droits().types_unite) {
+    <mat-tab [label]="'organisation.onglet_types' | t">
+      <div class="carte" animate.enter="entree-montee">
+        <div class="ligne">
+          <p class="texte-attenue">{{ 'organisation.types_aide' | t }}</p>
+          <span class="espace"></span>
+          <button mat-stroked-button (click)="editerType(null)">
+            <mat-icon>add</mat-icon>{{ 'organisation.nouveau_type' | t }}
+          </button>
+        </div>
+        <div class="types">
+          @for (t of tousLesTypes() ?? []; track t.id) {
+            <button
+              class="type carte-interactive"
+              (click)="editerType(t)"
+              animate.enter="entree-montee"
+              [style.--rang]="$index"
+            >
+              <span class="ordre">{{ t.ordre }}</span>
+              <span class="type-texte"
+                ><strong>{{ t.libelle_fr | bilingue: t.libelle_ar }}</strong
+                ><span class="texte-attenue ltr">{{ t.code }}</span></span
+              >
+              <span class="pastille">{{ 'organisation.nombre_unites' | t: { nombre: t.unites ?? 0 } }}</span>
+              @if (!t.actif) {
+                <span class="pastille alerte">{{ 'champ.inactif' | t }}</span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </mat-tab>
+  }
+</mat-tab-group>
+
+<ng-template #branche let-noeud let-rang="rang">
+  <li role="treeitem" [attr.aria-expanded]="noeud.enfants.length ? estOuverte(noeud.unite.uuid) : null">
+    <div class="noeud" [class.inactif]="!noeud.unite.actif" animate.enter="entree-montee" [style.--rang]="rang">
+      @if (noeud.enfants.length) {
+        <button
+          mat-icon-button
+          class="bascule"
+          [class.ouverte]="estOuverte(noeud.unite.uuid)"
+          (click)="basculer(noeud.unite.uuid)"
+          [attr.aria-label]="(estOuverte(noeud.unite.uuid) ? 'organisation.replier' : 'organisation.deplier') | t"
+        >
+          <mat-icon class="icone-directionnelle">chevron_right</mat-icon>
+        </button>
+      } @else {
+        <span class="bascule-vide"></span>
+      }
+      <span class="sigle">{{ noeud.unite.sigle || noeud.unite.code }}</span>
+      <span class="libelle">
+        <strong>{{ noeud.unite.libelle_fr | bilingue: noeud.unite.libelle_ar }}</strong>
+        <span class="texte-attenue">{{ noeud.unite.type_libelle | bilingue: noeud.unite.type_libelle_ar }}</span>
+      </span>
+      <span class="espace"></span>
+      @if (noeud.unite.affectations) {
+        <span class="pastille" [matTooltip]="'organisation.affectations_en_cours' | t"
+          ><mat-icon inline>person</mat-icon>{{ noeud.unite.affectations }}</span
+        >
+      }
+      @if (!noeud.unite.actif) {
+        <span class="pastille alerte">{{ 'champ.inactive' | t }}</span>
+      }
+      @if (noeud.unite.actif) {
+        <button mat-icon-button [matMenuTriggerFor]="menu" [attr.aria-label]="'action.actions' | t">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu" xPosition="before">
+          <button mat-menu-item (click)="editer(noeud.unite)">
+            <mat-icon>edit</mat-icon>{{ 'action.modifier' | t }}
+          </button>
+          <button mat-menu-item (click)="editer(null, noeud.unite.uuid)">
+            <mat-icon>subdirectory_arrow_right</mat-icon>{{ 'organisation.ajouter_sous_unite' | t }}
+          </button>
+          <button mat-menu-item (click)="desactiver(noeud.unite)">
+            <mat-icon>block</mat-icon>{{ 'action.desactiver' | t }}
+          </button>
+        </mat-menu>
+      }
+    </div>
+    @if (noeud.enfants.length) {
+      <div class="enfants" [class.ouverte]="estOuverte(noeud.unite.uuid)">
+        <ul role="group">
+          @if (estOuverte(noeud.unite.uuid)) {
+            @for (enfant of noeud.enfants; track enfant.unite.uuid) {
+              <ng-container
+                [ngTemplateOutlet]="branche"
+                [ngTemplateOutletContext]="{ $implicit: enfant, rang: $index }"
+              />
+            }
+          }
+        </ul>
+      </div>
+    }
+  </li>
+</ng-template>

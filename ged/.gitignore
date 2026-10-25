@@ -1,0 +1,10 @@
+__pycache__/
+*.mo
+.env
+staticfiles/
+media/
+.media-tests/
+scellements/
+.coverage
+htmlcov/
+docker/nginx/certs/

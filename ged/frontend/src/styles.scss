@@ -1,0 +1,353 @@
+// Styles globaux de la GED : thème Material 3, polices auto-hébergées, animations.
+// Aucune ressource externe : polices et icônes sont servies par l'application.
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$green-palette,
+        theme-type: light,
+      ),
+      typography: (
+        plain-family: 'IBM Plex Sans Arabic',
+        brand-family: 'IBM Plex Sans Arabic',
+        bold-weight: 600,
+      ),
+      density: 0,
+    )
+  );
+
+  // Couleurs de l'institution (remplacées au chargement par ThemeService).
+  --ged-primaire: #1f4e79;
+  --ged-secondaire: #2e7d32;
+  --mat-sys-primary: var(--ged-primaire);
+  --mat-sys-primary-container: color-mix(in srgb, var(--ged-primaire) 14%, white);
+  --mat-sys-on-primary-container: color-mix(in srgb, var(--ged-primaire) 75%, black);
+  --mat-sys-secondary-container: color-mix(in srgb, var(--ged-primaire) 10%, white);
+
+  --ged-fond: #f4f6fb;
+  --ged-surface: #ffffff;
+  --ged-texte: #17202b;
+  --ged-texte-attenue: #5b6676;
+  --ged-bordure: #e2e7ef;
+  --ged-succes: #1e8e3e;
+  --ged-alerte: #b3261e;
+  --ged-avertissement: #b06000;
+  --ged-rayon: 14px;
+  --ged-ombre: 0 1px 2px rgb(16 24 40 / 6%), 0 1px 3px rgb(16 24 40 / 10%);
+  --ged-ombre-forte: 0 12px 32px -8px rgb(16 24 40 / 22%);
+  --ged-courbe: cubic-bezier(0.2, 0, 0, 1);
+  --ged-courbe-ressort: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ged-fond);
+  color: var(--ged-texte);
+  font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--ged-primaire);
+}
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ged-primaire) 55%, #ffbf47);
+  outline-offset: 2px;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+[dir='rtl'] .icone-directionnelle {
+  transform: scaleX(-1);
+}
+
+.visuellement-cache {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// Écran affiché avant le démarrage d'Angular.
+.ecran-demarrage {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--ged-fond);
+}
+.ecran-demarrage-point {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 4px solid color-mix(in srgb, var(--ged-primaire) 20%, transparent);
+  border-top-color: var(--ged-primaire);
+  animation: ged-rotation 0.9s linear infinite;
+}
+
+// --- Composants transverses -------------------------------------------------------
+.carte {
+  background: var(--ged-surface);
+  border: 1px solid var(--ged-bordure);
+  border-radius: var(--ged-rayon);
+  box-shadow: var(--ged-ombre);
+  padding: 24px;
+}
+.carte-interactive {
+  transition:
+    transform 220ms var(--ged-courbe),
+    box-shadow 220ms var(--ged-courbe),
+    border-color 220ms;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--ged-ombre-forte);
+    border-color: color-mix(in srgb, var(--ged-primaire) 30%, var(--ged-bordure));
+  }
+}
+.grille {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+.pile {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.espace {
+  flex: 1 1 auto;
+}
+.texte-attenue {
+  color: var(--ged-texte-attenue);
+}
+.ltr {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.formulaire-grille {
+  display: grid;
+  gap: 4px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  align-items: start;
+}
+.pleine-largeur {
+  width: 100%;
+}
+
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #eef1f6;
+  color: var(--ged-texte-attenue);
+  white-space: nowrap;
+  &.succes {
+    background: #e6f4ea;
+    color: var(--ged-succes);
+  }
+  &.alerte {
+    background: #fce8e6;
+    color: var(--ged-alerte);
+  }
+  &.avertissement {
+    background: #fef7e0;
+    color: var(--ged-avertissement);
+  }
+  &.info {
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+}
+
+.tableau-conteneur {
+  overflow-x: auto;
+  border-radius: var(--ged-rayon);
+  border: 1px solid var(--ged-bordure);
+  background: var(--ged-surface);
+}
+table.mat-mdc-table {
+  background: transparent;
+}
+tr.mat-mdc-row {
+  transition: background-color 160ms;
+}
+tr.mat-mdc-row:hover {
+  background: color-mix(in srgb, var(--ged-primaire) 4%, transparent);
+}
+tr.ligne-cliquable {
+  cursor: pointer;
+}
+
+// --- Animations ------------------------------------------------------------------
+// Utilisées avec les directives natives animate.enter / animate.leave d'Angular.
+.entree-fondu {
+  animation: ged-fondu 320ms var(--ged-courbe) both;
+}
+.entree-montee {
+  animation: ged-montee 420ms var(--ged-courbe) both;
+  animation-delay: calc(var(--rang, 0) * 45ms);
+}
+.entree-zoom {
+  animation: ged-zoom 360ms var(--ged-courbe-ressort) both;
+}
+.entree-glisse {
+  animation: ged-glisse 380ms var(--ged-courbe) both;
+}
+.sortie-fondu {
+  animation: ged-fondu 200ms var(--ged-courbe) reverse both;
+}
+.sortie-glisse {
+  animation: ged-glisse-sortie 220ms var(--ged-courbe) both;
+}
+
+@keyframes ged-fondu {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ged-montee {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ged-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ged-glisse {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--sens, 1) * 32px));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ged-glisse-sortie {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--sens, 1) * -32px));
+  }
+}
+@keyframes ged-rotation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ged-miroitement {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+[dir='rtl'] {
+  --sens: -1;
+}
+
+// Squelettes de chargement.
+.squelette {
+  border-radius: 8px;
+  background: linear-gradient(90deg, #eceff4 25%, #f6f8fb 50%, #eceff4 75%);
+  background-size: 200% 100%;
+  animation: ged-miroitement 1.4s ease-in-out infinite;
+}
+
+// Transitions entre pages (API View Transitions, activée dans le routeur).
+::view-transition-old(contenu-principal) {
+  animation: 160ms var(--ged-courbe) both ged-vt-sortie;
+}
+::view-transition-new(contenu-principal) {
+  animation: 320ms var(--ged-courbe) both ged-vt-entree;
+}
+@keyframes ged-vt-sortie {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes ged-vt-entree {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+// Accessibilité : mouvements réduits sur demande du système.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+// Ajustements Material.
+.mat-mdc-dialog-surface {
+  border-radius: 20px !important;
+}
+// Message d'erreur générale des dialogues de saisie. Règle commune plutôt que des styles en ligne :
+// deux composants aux styles en ligne identiques empêchent `ng build` de se terminer (Angular 21.2).
+.mat-mdc-dialog-content .erreur {
+  color: var(--ged-alerte);
+}
+.mat-mdc-snack-bar-container.notification-succes {
+  --mdc-snackbar-container-color: #12391f;
+}
+.mat-mdc-snack-bar-container.notification-erreur {
+  --mdc-snackbar-container-color: #5c1a14;
+}
+.mat-mdc-form-field {
+  width: 100%;
+}

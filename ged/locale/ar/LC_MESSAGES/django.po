@@ -1,0 +1,857 @@
+# Traduction arabe de l'interface de la GED.
+# Textes sources en français ; régénérer avec makemessages puis compléter.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-24 00:29+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "Contrôle d'accès"
+msgstr "التحكم في الوصول"
+
+msgid "Indiquez le motif de la désactivation."
+msgstr "حدِّد سبب التعطيل."
+
+msgid "Identifiant"
+msgstr "اسم المستخدم"
+
+msgid "Nom"
+msgstr "اللقب"
+
+msgid "Prénom"
+msgstr "الاسم"
+
+msgid "Actif"
+msgstr "نشط"
+
+msgid "Niveau d'habilitation"
+msgstr "مستوى التأهيل"
+
+msgid "Double authentification"
+msgstr "المصادقة الثنائية"
+
+msgid "Dernière connexion"
+msgstr "آخر دخول"
+
+msgid "Rôle"
+msgstr "الدور"
+
+msgid "Unité"
+msgstr "الوحدة"
+
+msgid "Sous-unités"
+msgstr "الوحدات الفرعية"
+
+msgid "Début"
+msgstr "البداية"
+
+msgid "Fin"
+msgstr "النهاية"
+
+msgid "oui"
+msgstr "نعم"
+
+msgid "non"
+msgstr "لا"
+
+msgid "Administration fonctionnelle"
+msgstr "الإدارة الوظيفية"
+
+msgid "Mot de passe temporaire"
+msgstr "كلمة مرور مؤقتة"
+
+msgid ""
+"À communiquer à la personne ; il devra être changé à la première connexion."
+msgstr "تُبلَّغ إلى صاحب الحساب، ويجب تغييرها عند أول دخول."
+
+msgid "Indiquez à la fois l'unité et le rôle, ou aucun des deux."
+msgstr "حدِّد الوحدة والدور معًا، أو اتركهما فارغين."
+
+msgid "Motif"
+msgstr "السبب"
+
+msgid "Permissions"
+msgstr "الصلاحيات"
+
+msgid "Audit"
+msgstr "التدقيق"
+
+msgid "succès"
+msgstr "نجاح"
+
+msgid "refus"
+msgstr "رفض"
+
+msgid "erreur"
+msgstr "خطأ"
+
+msgid "horodatage"
+msgstr "الطابع الزمني"
+
+msgid "institution"
+msgstr "مؤسسة"
+
+msgid "compte de l'acteur"
+msgstr "حساب الفاعل"
+
+msgid "acteur"
+msgstr "الفاعل"
+
+msgid "agissant pour (délégation)"
+msgstr "نيابةً عن (تفويض)"
+
+msgid "adresse IP"
+msgstr "عنوان IP"
+
+msgid "action"
+msgstr "الإجراء"
+
+msgid "type d'objet"
+msgstr "نوع الكائن"
+
+msgid "identifiant de l'objet"
+msgstr "معرّف الكائن"
+
+msgid "résultat"
+msgstr "النتيجة"
+
+msgid "détails"
+msgstr "التفاصيل"
+
+msgid "empreinte précédente"
+msgstr "البصمة السابقة"
+
+msgid "empreinte"
+msgstr "البصمة"
+
+msgid "événement d'audit"
+msgstr "حدث تدقيق"
+
+msgid "journal d'audit"
+msgstr "سجل التدقيق"
+
+msgid "date"
+msgstr "التاريخ"
+
+msgid "dernier événement scellé"
+msgstr "آخر حدث مختوم"
+
+msgid "nombre d'événements depuis l'origine"
+msgstr "عدد الأحداث منذ البداية"
+
+msgid "créé le"
+msgstr "أُنشئ في"
+
+msgid "scellement du journal"
+msgstr "ختم السجل"
+
+msgid "scellements du journal"
+msgstr "أختام السجل"
+
+msgid ""
+"Identifiant ou mot de passe incorrect, ou compte temporairement verrouillé."
+msgstr "اسم المستخدم أو كلمة المرور غير صحيحة، أو الحساب مقفل مؤقتًا."
+
+msgid "Saisissez votre identifiant et votre mot de passe."
+msgstr "أدخل اسم المستخدم وكلمة المرور."
+
+msgid "Étape expirée : reconnectez-vous."
+msgstr "انتهت المهلة: سجِّل الدخول من جديد."
+
+msgid "Code incorrect ou déjà utilisé."
+msgstr "الرمز غير صحيح أو مستعمل من قبل."
+
+#| msgid "Double authentification désactivée."
+msgid "La double authentification est déjà activée."
+msgstr "المصادقة الثنائية مفعَّلة بالفعل."
+
+msgid "Code incorrect. Vérifiez l'heure de votre téléphone et réessayez."
+msgstr "الرمز غير صحيح. تحقق من ساعة هاتفك وأعد المحاولة."
+
+msgid "Langue inconnue."
+msgstr "لغة غير معروفة."
+
+#| msgid "Mot de passe temporaire"
+msgid "Mot de passe actuel incorrect."
+msgstr "كلمة المرور الحالية غير صحيحة."
+
+msgid "Les deux mots de passe ne correspondent pas."
+msgstr "كلمتا المرور غير متطابقتين."
+
+msgid ""
+"Votre rôle impose la double authentification : elle ne peut pas être "
+"désactivée."
+msgstr "يفرض دورك المصادقة الثنائية: لا يمكن تعطيلها."
+
+#| msgid "Double authentification désactivée."
+msgid "La double authentification n'est pas activée."
+msgstr "المصادقة الثنائية غير مفعَّلة."
+
+#| msgid "délégataire"
+msgid "Choisissez un délégataire."
+msgstr "اختر المفوَّض إليه."
+
+msgid "Date et heure attendues."
+msgstr "يجب إدخال التاريخ والوقت."
+
+#| msgid "Indiquez le motif de la désactivation."
+msgid "Indiquez le motif."
+msgstr "حدِّد السبب."
+
+msgid "Identités"
+msgstr "الهويات"
+
+msgid "Administration"
+msgstr "الإدارة"
+
+msgid "Paramètres de l'institution, types de documents, circuits"
+msgstr "إعدادات المؤسسة وأنواع الوثائق والمسارات"
+
+msgid "Unités organisationnelles et postes"
+msgstr "الوحدات التنظيمية والمناصب"
+
+msgid "Comptes utilisateurs, affectations et délégations"
+msgstr "حسابات المستخدمين والتعيينات والتفويضات"
+
+msgid "Rôles et permissions"
+msgstr "الأدوار والصلاحيات"
+
+msgid "Plan de classement et règles de conservation"
+msgstr "خطة التصنيف وقواعد الحفظ"
+
+msgid "Consulter le journal d'audit et le journal des connexions"
+msgstr "الاطلاع على سجل التدقيق وسجل الدخول"
+
+msgid "Exporter le journal d'audit"
+msgstr "تصدير سجل التدقيق"
+
+msgid "Courrier"
+msgstr "البريد"
+
+msgid "Enregistrer un courrier entrant ou sortant"
+msgstr "تسجيل بريد وارد أو صادر"
+
+msgid "Documents"
+msgstr "الوثائق"
+
+msgid "Créer un document"
+msgstr "إنشاء وثيقة"
+
+msgid "Consulter les documents et leur contenu"
+msgstr "الاطلاع على الوثائق ومحتواها"
+
+msgid "Consulter les fiches descriptives sans le contenu"
+msgstr "الاطلاع على البطاقات الوصفية دون المحتوى"
+
+msgid "Télécharger le fichier original"
+msgstr "تنزيل الملف الأصلي"
+
+msgid "Modifier les métadonnées"
+msgstr "تعديل البيانات الوصفية"
+
+msgid "Ajouter une version"
+msgstr "إضافة نسخة"
+
+msgid "Changer le niveau de confidentialité"
+msgstr "تغيير مستوى السرية"
+
+msgid "Dossiers"
+msgstr "الملفات"
+
+msgid "Créer, alimenter et clôturer un dossier"
+msgstr "إنشاء ملف وإثراؤه وإغلاقه"
+
+msgid "Rouvrir un dossier clos"
+msgstr "إعادة فتح ملف مغلق"
+
+msgid "Circuits"
+msgstr "المسارات"
+
+msgid "Transmettre et affecter"
+msgstr "الإحالة والتكليف"
+
+msgid "Archives"
+msgstr "الأرشيف"
+
+msgid "Gel, versement et élimination"
+msgstr "التجميد والتحويل والإتلاف"
+
+msgid "Recherche"
+msgstr "البحث"
+
+msgid "Exporter des résultats de recherche"
+msgstr "تصدير نتائج البحث"
+
+msgid "Votre session a expiré après une période d'inactivité."
+msgstr "انتهت جلستك بعد فترة من الخمول."
+
+#| msgid "Mot de passe temporaire"
+msgid "Changez votre mot de passe temporaire."
+msgstr "غيِّر كلمة مرورك المؤقتة."
+
+#| msgid "Activer la double authentification"
+msgid "Activez la double authentification."
+msgstr "فعِّل المصادقة الثنائية."
+
+msgid "Public interne"
+msgstr "عام داخلي"
+
+msgid "Restreint"
+msgstr "مقيَّد"
+
+msgid "Confidentiel"
+msgstr "سري"
+
+msgid "Secret"
+msgstr "سري للغاية"
+
+msgid "identifiant public"
+msgstr "المعرّف العام"
+
+msgid "Vide uniquement pour le superadministrateur technique."
+msgstr "يُترك فارغًا للمدير التقني الأعلى فقط."
+
+msgid "identifiant"
+msgstr "اسم المستخدم"
+
+msgid "nom"
+msgstr "اللقب"
+
+msgid "prénom"
+msgstr "الاسم"
+
+msgid "nom complet en arabe"
+msgstr "الاسم الكامل بالعربية"
+
+msgid "courriel"
+msgstr "البريد الإلكتروني"
+
+msgid "langue de l'interface"
+msgstr "لغة الواجهة"
+
+msgid "Vide : langue par défaut de l'institution."
+msgstr "فارغ: اللغة الافتراضية للمؤسسة."
+
+msgid "actif"
+msgstr "نشط"
+
+msgid "accès à l'administration technique"
+msgstr "الوصول إلى الإدارة التقنية"
+
+msgid "niveau d'habilitation"
+msgstr "مستوى التأهيل"
+
+msgid "échecs de connexion consécutifs"
+msgstr "محاولات الدخول الفاشلة المتتالية"
+
+msgid "verrouillé jusqu'à"
+msgstr "مقفل حتى"
+
+msgid "doit changer son mot de passe"
+msgstr "يجب تغيير كلمة المرور"
+
+msgid "Activé lorsqu'un administrateur fixe un mot de passe temporaire."
+msgstr "يُفعَّل عندما يحدد مدير كلمة مرور مؤقتة."
+
+msgid "mot de passe modifié le"
+msgstr "تاريخ تغيير كلمة المرور"
+
+msgid "utilisateur"
+msgstr "مستخدم"
+
+msgid "utilisateurs"
+msgstr "المستخدمون"
+
+msgid "code"
+msgstr "الرمز"
+
+msgid "groupe"
+msgstr "المجموعة"
+
+msgid "description"
+msgstr "الوصف"
+
+msgid "active"
+msgstr "نشطة"
+
+msgid "permission"
+msgstr "صلاحية"
+
+msgid "permissions"
+msgstr "الصلاحيات"
+
+msgid "libellé en français"
+msgstr "التسمية بالفرنسية"
+
+msgid "libellé en arabe"
+msgstr "التسمية بالعربية"
+
+msgid "double authentification obligatoire"
+msgstr "المصادقة الثنائية إلزامية"
+
+msgid "Les titulaires de ce rôle doivent activer la double authentification."
+msgstr "يجب على أصحاب هذا الدور تفعيل المصادقة الثنائية."
+
+msgid "rôle fourni à l'installation"
+msgstr "دور مُنشأ عند التثبيت"
+
+msgid "modifié le"
+msgstr "عُدّل في"
+
+msgid "rôle"
+msgstr "دور"
+
+msgid "rôles"
+msgstr "الأدوار"
+
+msgid "unité"
+msgstr "وحدة"
+
+msgid "poste"
+msgstr "منصب"
+
+msgid "s'étend aux sous-unités"
+msgstr "يشمل الوحدات الفرعية"
+
+msgid "Le rôle s'exerce aussi dans toutes les unités rattachées à celle-ci."
+msgstr "يُمارَس الدور أيضًا في جميع الوحدات التابعة لهذه الوحدة."
+
+msgid "date de début"
+msgstr "تاريخ البداية"
+
+msgid "date de fin"
+msgstr "تاريخ النهاية"
+
+msgid "attribuée par"
+msgstr "منحه"
+
+msgid "créée le"
+msgstr "أُنشئت في"
+
+msgid "affectation"
+msgstr "تعيين"
+
+msgid "affectations"
+msgstr "التعيينات"
+
+msgid "délégant"
+msgstr "المفوِّض"
+
+msgid "délégataire"
+msgstr "المفوَّض إليه"
+
+msgid "rôles délégués"
+msgstr "الأدوار المفوَّضة"
+
+msgid "Vide : tous les rôles du délégant."
+msgstr "فارغ: جميع أدوار المفوِّض."
+
+msgid "début"
+msgstr "البداية"
+
+msgid "fin"
+msgstr "النهاية"
+
+msgid "motif"
+msgstr "السبب"
+
+msgid "créée par"
+msgstr "أنشأها"
+
+msgid "révoquée le"
+msgstr "أُلغيت في"
+
+msgid "révoquée par"
+msgstr "ألغاها"
+
+msgid "délégation"
+msgstr "تفويض"
+
+msgid "délégations"
+msgstr "التفويضات"
+
+msgid "secret"
+msgstr "السر"
+
+msgid "confirmé"
+msgstr "مؤكَّد"
+
+msgid "dernier pas de temps utilisé"
+msgstr "آخر فترة زمنية مستعملة"
+
+msgid "Empêche de réutiliser un code."
+msgstr "يمنع إعادة استعمال الرمز."
+
+msgid "confirmé le"
+msgstr "تاريخ التأكيد"
+
+msgid "application d'authentification"
+msgstr "تطبيق المصادقة"
+
+msgid "applications d'authentification"
+msgstr "تطبيقات المصادقة"
+
+msgid "utilisé le"
+msgstr "استُعمل في"
+
+msgid "code de secours"
+msgstr "رمز احتياطي"
+
+msgid "codes de secours"
+msgstr "الرموز الاحتياطية"
+
+msgid "déconnexion"
+msgstr "تسجيل الخروج"
+
+msgid "inactivité"
+msgstr "الخمول"
+
+msgid "révocation"
+msgstr "الإلغاء"
+
+msgid "compte désactivé"
+msgstr "حساب معطَّل"
+
+msgid "clé de session"
+msgstr "مفتاح الجلسة"
+
+msgid "navigateur"
+msgstr "المتصفح"
+
+msgid "motif de fin"
+msgstr "سبب الانتهاء"
+
+msgid "session"
+msgstr "جلسة"
+
+msgid "sessions"
+msgstr "الجلسات"
+
+msgid ""
+"Vous ne pouvez pas attribuer un niveau d'habilitation supérieur au vôtre."
+msgstr "لا يمكنك منح مستوى تأهيل أعلى من مستواك."
+
+msgid "Indiquez l'unité et le rôle du nouveau compte."
+msgstr "حدِّد وحدة الحساب الجديد ودوره."
+
+msgid "Ce rôle est désactivé."
+msgstr "هذا الدور معطَّل."
+
+msgid "Cette unité est désactivée."
+msgstr "هذه الوحدة معطَّلة."
+
+msgid "Ce poste n'appartient pas à l'unité choisie."
+msgstr "هذا المنصب لا ينتمي إلى الوحدة المختارة."
+
+msgid "Cette affectation est déjà clôturée à cette date."
+msgstr "هذا التعيين منتهٍ بالفعل في هذا التاريخ."
+
+msgid "Le délégataire doit être un compte actif de la même institution."
+msgstr "يجب أن يكون المفوَّض إليه حسابًا نشطًا في المؤسسة نفسها."
+
+msgid "On ne peut pas se déléguer à soi-même."
+msgstr "لا يمكن تفويض النفس."
+
+msgid "La fin doit être postérieure au début."
+msgstr "يجب أن تكون النهاية بعد البداية."
+
+#, python-format
+msgid "Une délégation ne peut pas dépasser %(jours)d jours."
+msgstr "لا يمكن أن يتجاوز التفويض %(jours)d يومًا."
+
+msgid "Seuls les rôles que le délégant exerce peuvent être délégués."
+msgstr "لا يمكن تفويض سوى الأدوار التي يمارسها المفوِّض."
+
+msgid "Cette délégation est déjà révoquée."
+msgstr "هذا التفويض ملغى بالفعل."
+
+msgid "Noyau"
+msgstr "النواة"
+
+msgid "Couleur attendue au format #RRGGBB."
+msgstr "يجب أن يكون اللون بالصيغة ‎#RRGGBB."
+
+#, python-format
+msgid "Fuseau horaire inconnu : %(valeur)s."
+msgstr "منطقة زمنية غير معروفة: %(valeur)s."
+
+msgid "nom en français"
+msgstr "الاسم بالفرنسية"
+
+msgid "nom en arabe"
+msgstr "الاسم بالعربية"
+
+msgid "sigle"
+msgstr "المختصر"
+
+msgid "logo"
+msgstr "الشعار"
+
+msgid "couleur principale"
+msgstr "اللون الرئيسي"
+
+msgid "couleur secondaire"
+msgstr "اللون الثانوي"
+
+msgid "adresse"
+msgstr "العنوان"
+
+msgid "téléphone"
+msgstr "الهاتف"
+
+msgid "site web"
+msgstr "الموقع الإلكتروني"
+
+msgid "fuseau horaire"
+msgstr "المنطقة الزمنية"
+
+msgid "langue par défaut"
+msgstr "اللغة الافتراضية"
+
+msgid "format de date"
+msgstr "صيغة التاريخ"
+
+msgid "institutions"
+msgstr "المؤسسات"
+
+msgid "Cette installation est mono-institution : une institution existe déjà."
+msgstr "هذا التثبيت مخصص لمؤسسة واحدة: توجد مؤسسة بالفعل."
+
+msgid "clé"
+msgstr "المفتاح"
+
+msgid "valeur"
+msgstr "القيمة"
+
+msgid "modifié par"
+msgstr "عُدّل من طرف"
+
+msgid "paramètre de l'institution"
+msgstr "إعداد المؤسسة"
+
+msgid "paramètres de l'institution"
+msgstr "إعدادات المؤسسة"
+
+msgid "gabarit"
+msgstr "القالب"
+
+#, python-brace-format
+msgid "Exemple : {SIGLE}/{UNITE}/{AAAA}/{SEQ:5}"
+msgstr "مثال: {SIGLE}/{UNITE}/{AAAA}/{SEQ:5}"
+
+msgid "repart à 1 chaque année"
+msgstr "يبدأ من 1 كل سنة"
+
+msgid "compteur distinct par unité"
+msgstr "عدّاد مستقل لكل وحدة"
+
+msgid "compteur distinct par catégorie"
+msgstr "عدّاد مستقل لكل فئة"
+
+msgid "série de numérotation"
+msgstr "سلسلة ترقيم"
+
+msgid "séries de numérotation"
+msgstr "سلاسل الترقيم"
+
+msgid ""
+"Cette série a déjà attribué des numéros : son gabarit et sa portée ne peuvent"
+" plus changer. Créez une nouvelle série."
+msgstr ""
+"منحت هذه السلسلة أرقامًا بالفعل: لم يعد من الممكن تغيير قالبها ونطاقها. أنشئ "
+"سلسلة جديدة."
+
+msgid "série"
+msgstr "السلسلة"
+
+msgid "portée"
+msgstr "النطاق"
+
+msgid "dernier numéro attribué"
+msgstr "آخر رقم ممنوح"
+
+msgid "compteur de série"
+msgstr "عدّاد السلسلة"
+
+msgid "compteurs de série"
+msgstr "عدّادات السلاسل"
+
+msgid "Accolade isolée ou jeton mal formé dans le gabarit."
+msgstr "قوس منفرد أو رمز غير سليم في القالب."
+
+#, python-format, python-brace-format
+msgid "Le jeton {SEQ:n} exige une longueur entre 1 et %(max)d."
+msgstr "يتطلب الرمز {SEQ:n} طولًا بين 1 و%(max)d."
+
+#, python-format
+msgid "Jeton inconnu : %(jeton)s."
+msgstr "رمز غير معروف: %(jeton)s."
+
+#, python-brace-format
+msgid "Le gabarit doit contenir exactement un jeton {SEQ:n}."
+msgstr "يجب أن يحتوي القالب على رمز {SEQ:n} واحد بالضبط."
+
+#, python-brace-format
+msgid "Une numérotation annuelle exige {AAAA} ou {AA} dans le gabarit."
+msgstr "يتطلب الترقيم السنوي وجود {AAAA} أو {AA} في القالب."
+
+#, python-brace-format
+msgid "Une numérotation par unité exige {UNITE} dans le gabarit."
+msgstr "يتطلب الترقيم حسب الوحدة وجود {UNITE} في القالب."
+
+#, python-brace-format
+msgid "Une numérotation par catégorie exige {CATEGORIE} dans le gabarit."
+msgstr "يتطلب الترقيم حسب الفئة وجود {CATEGORIE} في القالب."
+
+#, python-format
+msgid ""
+"Code %(libelle)s invalide : lettres, chiffres, tiret ou souligné, 30 "
+"caractères au plus."
+msgstr ""
+"رمز %(libelle)s غير صالح: أحرف أو أرقام أو شرطة أو شرطة سفلية، 30 حرفًا على "
+"الأكثر."
+
+#, python-format
+msgid "Entier attendu entre %(min)d et %(max)d."
+msgstr "يجب إدخال عدد صحيح بين %(min)d و%(max)d."
+
+#, python-format
+msgid "Valeur attendue parmi : %(valeurs)s."
+msgstr "يجب أن تكون القيمة من بين: %(valeurs)s."
+
+msgid "Durée d'inactivité avant déconnexion, en minutes."
+msgstr "مدة الخمول قبل قطع الاتصال، بالدقائق."
+
+msgid "Taille maximale d'un fichier envoyé, en mégaoctets."
+msgstr "الحجم الأقصى للملف المرسل، بالميغابايت."
+
+msgid ""
+"Nombre de jours avant l'échéance où le titulaire d'une tâche est alerté."
+msgstr "عدد الأيام قبل الأجل التي يُنبَّه فيها المكلّف بالمهمة."
+
+msgid "Nombre d'échecs de connexion consécutifs qui verrouillent un compte."
+msgstr "عدد محاولات الدخول الفاشلة المتتالية التي تقفل الحساب."
+
+msgid "Durée du verrouillage d'un compte après trop d'échecs, en minutes."
+msgstr "مدة قفل الحساب بعد محاولات فاشلة كثيرة، بالدقائق."
+
+msgid "Durée maximale d'une délégation, en jours."
+msgstr "المدة القصوى للتفويض، بالأيام."
+
+msgid "Chiffres affichés en arabe : occidentaux (0-9) ou orientaux."
+msgstr "الأرقام المعروضة بالعربية: غربية (0-9) أو مشرقية."
+
+#, python-format
+msgid "Paramètre inconnu : %(cle)s."
+msgstr "إعداد غير معروف: %(cle)s."
+
+#, python-format
+msgid "La série %(code)s est inactive."
+msgstr "السلسلة %(code)s غير نشطة."
+
+msgid "d'unité"
+msgstr "الوحدة"
+
+msgid "de catégorie"
+msgstr "الفئة"
+
+msgid "Le logo ne doit pas dépasser 1 Mo."
+msgstr "يجب ألا يتجاوز حجم الشعار 1 ميغابايت."
+
+msgid "Le logo doit être une image PNG ou JPEG."
+msgstr "يجب أن يكون الشعار صورة PNG أو JPEG."
+
+msgid "Organisation"
+msgstr "التنظيم"
+
+msgid "ordre d'affichage"
+msgstr "ترتيب العرض"
+
+msgid "type d'unité"
+msgstr "نوع الوحدة"
+
+msgid "types d'unité"
+msgstr "أنواع الوحدات"
+
+msgid "type"
+msgstr "النوع"
+
+msgid "unité parente"
+msgstr "الوحدة الأم"
+
+#, python-brace-format
+msgid "Utilisé dans les références (jeton {UNITE})."
+msgstr "يُستعمل في المراجع (الرمز {UNITE})."
+
+msgid "chemin"
+msgstr "المسار"
+
+msgid "unité organisationnelle"
+msgstr "وحدة تنظيمية"
+
+msgid "unités organisationnelles"
+msgstr "الوحدات التنظيمية"
+
+msgid "Ce type d'unité appartient à une autre institution."
+msgstr "نوع الوحدة هذا تابع لمؤسسة أخرى."
+
+msgid "L'unité parente appartient à une autre institution."
+msgstr "الوحدة الأم تابعة لمؤسسة أخرى."
+
+msgid "Une unité ne peut pas être rattachée à l'une de ses sous-unités."
+msgstr "لا يمكن إلحاق وحدة بإحدى وحداتها الفرعية."
+
+msgid "L'unité parente est désactivée."
+msgstr "الوحدة الأم معطَّلة."
+
+msgid "intitulé en français"
+msgstr "التسمية بالفرنسية"
+
+msgid "intitulé en arabe"
+msgstr "التسمية بالعربية"
+
+msgid "poste supérieur"
+msgstr "المنصب الأعلى"
+
+msgid "Sert à l'escalade hiérarchique."
+msgstr "يُستعمل للتصعيد التسلسلي."
+
+msgid "postes"
+msgstr "المناصب"
+
+msgid "Cette unité appartient à une autre institution."
+msgstr "هذه الوحدة تابعة لمؤسسة أخرى."
+
+msgid "Ce poste appartient à une autre institution."
+msgstr "هذا المنصب تابع لمؤسسة أخرى."
+
+msgid "La hiérarchie des postes ne peut pas former une boucle."
+msgstr "لا يمكن أن يشكّل تسلسل المناصب حلقة مغلقة."
+
+msgid ""
+"Rattachez l'unité à une unité parente : l'unité racine représente "
+"l'institution."
+msgstr "ألحِق الوحدة بوحدة أم: الوحدة الجذرية تمثل المؤسسة."
+
+#| msgid "L'unité parente est désactivée."
+msgid "L'unité racine ne peut pas être déplacée."
+msgstr "لا يمكن نقل الوحدة الجذرية."
+
+msgid "Désactivez ou déplacez d'abord ses sous-unités actives."
+msgstr "عطِّل أو انقل أولًا وحداتها الفرعية النشطة."
+
+msgid ""
+"Clôturez ou transférez d'abord les affectations en cours dans cette unité."
+msgstr "أنهِ أو انقل أولًا التعيينات الجارية في هذه الوحدة."
+
+msgid "Désactivez d'abord les postes de cette unité."
+msgstr "عطِّل أولًا مناصب هذه الوحدة."

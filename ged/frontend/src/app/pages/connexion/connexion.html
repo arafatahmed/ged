@@ -1,0 +1,220 @@
+<div class="page" [dir]="traduction.direction()">
+  <section class="vitrine" aria-hidden="true">
+    <div class="halo halo-1"></div>
+    <div class="halo halo-2"></div>
+    <div class="halo halo-3"></div>
+    <div class="vitrine-contenu">
+      <div class="monogramme">
+        @if (session.institution()?.logo) {
+          <img src="/institution/logo/" alt="" width="64" height="64" />
+        } @else {
+          {{ session.institution()?.sigle?.charAt(0) ?? 'G' }}
+        }
+      </div>
+      <h2>{{ session.institution()?.nom_fr | bilingue: session.institution()?.nom_ar }}</h2>
+      <p class="accroche">{{ 'connexion.accroche' | t }}</p>
+      <ul class="atouts">
+        <li [style.--rang]="1" animate.enter="entree-montee">
+          <mat-icon>verified_user</mat-icon>{{ 'connexion.atout_securite' | t }}
+        </li>
+        <li [style.--rang]="2" animate.enter="entree-montee">
+          <mat-icon>account_tree</mat-icon>{{ 'connexion.atout_organisation' | t }}
+        </li>
+        <li [style.--rang]="3" animate.enter="entree-montee">
+          <mat-icon>history_edu</mat-icon>{{ 'connexion.atout_tracabilite' | t }}
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="formulaire">
+    <div class="langues">
+      <mat-button-toggle-group
+        hideSingleSelectionIndicator
+        [value]="traduction.langue()"
+        (change)="changerLangue($event.value)"
+        [attr.aria-label]="'menu.langue' | t"
+      >
+        <mat-button-toggle value="fr" lang="fr">Français</mat-button-toggle>
+        <mat-button-toggle value="ar" lang="ar">العربية</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <div
+      class="carte panneau"
+      [class.secousse]="secousse() % 2 === 1"
+      [class.secousse-bis]="secousse() > 0 && secousse() % 2 === 0"
+    >
+      @switch (etape()) {
+        @case ('identifiants') {
+          <div animate.enter="entree-glisse">
+            <h1>{{ 'connexion.titre' | t }}</h1>
+            <p class="texte-attenue">{{ 'connexion.sous_titre' | t }}</p>
+            @if (sessionExpiree && !erreur()) {
+              <p class="bandeau info" role="status">
+                <mat-icon>schedule</mat-icon>{{ 'connexion.session_expiree' | t }}
+              </p>
+            }
+            @if (erreur()) {
+              <p class="bandeau erreur" role="alert" animate.enter="entree-fondu">
+                <mat-icon>error</mat-icon>{{ erreur() }}
+              </p>
+            }
+            <form [formGroup]="identifiants" (ngSubmit)="seConnecter()" novalidate>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'connexion.identifiant' | t }}</mat-label>
+                <mat-icon matPrefix>person</mat-icon>
+                <input matInput formControlName="identifiant" autocomplete="username" dir="ltr" autofocus />
+                @if (identifiants.controls.identifiant.hasError('required')) {
+                  <mat-error>{{ 'erreur.champ_obligatoire' | t }}</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'connexion.mot_de_passe' | t }}</mat-label>
+                <mat-icon matPrefix>lock</mat-icon>
+                <input
+                  matInput
+                  formControlName="mot_de_passe"
+                  [type]="motDePasseVisible() ? 'text' : 'password'"
+                  autocomplete="current-password"
+                  dir="ltr"
+                />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  (click)="motDePasseVisible.set(!motDePasseVisible())"
+                  [attr.aria-label]="(motDePasseVisible() ? 'connexion.masquer' : 'connexion.afficher') | t"
+                >
+                  <mat-icon>{{ motDePasseVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                @if (identifiants.controls.mot_de_passe.hasError('required')) {
+                  <mat-error>{{ 'erreur.champ_obligatoire' | t }}</mat-error>
+                }
+              </mat-form-field>
+              <button mat-flat-button class="principal" type="submit" [disabled]="envoi()">
+                @if (envoi()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  {{ 'connexion.se_connecter' | t }}
+                }
+              </button>
+            </form>
+          </div>
+        }
+        @case ('mfa') {
+          <div animate.enter="entree-glisse">
+            <span class="pictogramme" aria-hidden="true"><mat-icon>phonelink_lock</mat-icon></span>
+            <h1>{{ 'connexion.mfa_titre' | t }}</h1>
+            <p class="texte-attenue">{{ 'connexion.mfa_aide' | t }}</p>
+            @if (erreur()) {
+              <p class="bandeau erreur" role="alert" animate.enter="entree-fondu">
+                <mat-icon>error</mat-icon>{{ erreur() }}
+              </p>
+            }
+            <form (ngSubmit)="verifierCode()" novalidate>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'connexion.code' | t }}</mat-label>
+                <input
+                  matInput
+                  class="champ-code"
+                  [formControl]="code"
+                  (input)="saisieCode()"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                  maxlength="11"
+                  dir="ltr"
+                  autofocus
+                />
+                <mat-hint>{{ 'connexion.code_aide' | t }}</mat-hint>
+              </mat-form-field>
+              <button mat-flat-button class="principal" type="submit" [disabled]="envoi() || code.invalid">
+                @if (envoi()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  {{ 'connexion.verifier' | t }}
+                }
+              </button>
+            </form>
+            <p class="texte-attenue petit">{{ 'connexion.telephone_perdu' | t }}</p>
+            <button mat-button type="button" (click)="recommencer()">
+              <mat-icon class="icone-directionnelle">arrow_back</mat-icon>{{ 'connexion.changer_de_compte' | t }}
+            </button>
+          </div>
+        }
+        @case ('enrolement') {
+          <div animate.enter="entree-glisse">
+            <span class="pictogramme" aria-hidden="true"><mat-icon>qr_code_2</mat-icon></span>
+            <h1>{{ 'mfa.activer_titre' | t }}</h1>
+            @if (enrolement()?.obligatoire) {
+              <p class="bandeau info"><mat-icon>verified_user</mat-icon>{{ 'mfa.obligatoire' | t }}</p>
+            }
+            <ol class="etapes">
+              <li>{{ 'mfa.etape_installer' | t }}</li>
+              <li>{{ 'mfa.etape_scanner' | t }}</li>
+            </ol>
+            @if (enrolement(); as e) {
+              <div class="qr" animate.enter="entree-zoom">
+                <img [src]="e.qr_code" [alt]="'mfa.qr_alt' | t" width="188" height="188" />
+              </div>
+              <p class="secret">
+                {{ 'mfa.cle' | t }} <code class="ltr">{{ e.secret }}</code>
+              </p>
+            }
+            @if (erreur()) {
+              <p class="bandeau erreur" role="alert" animate.enter="entree-fondu">
+                <mat-icon>error</mat-icon>{{ erreur() }}
+              </p>
+            }
+            <form (ngSubmit)="verifierCode()" novalidate>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'mfa.etape_code' | t }}</mat-label>
+                <input
+                  matInput
+                  class="champ-code"
+                  [formControl]="code"
+                  (input)="saisieCode()"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                  maxlength="6"
+                  dir="ltr"
+                />
+              </mat-form-field>
+              <button mat-flat-button class="principal" type="submit" [disabled]="envoi() || code.invalid">
+                @if (envoi()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  {{ 'mfa.activer' | t }}
+                }
+              </button>
+            </form>
+            <button mat-button type="button" (click)="recommencer()">
+              <mat-icon class="icone-directionnelle">arrow_back</mat-icon>{{ 'connexion.changer_de_compte' | t }}
+            </button>
+          </div>
+        }
+        @case ('codes') {
+          <div animate.enter="entree-zoom" class="reussite">
+            <svg class="coche" viewBox="0 0 52 52" aria-hidden="true">
+              <circle cx="26" cy="26" r="24" />
+              <path d="M14 27l8 8 16-17" />
+            </svg>
+            <h1>{{ 'mfa.active' | t }}</h1>
+            <p class="texte-attenue">{{ 'mfa.codes_aide' | t }}</p>
+            <ul class="codes ltr">
+              @for (c of codesSecours(); track c) {
+                <li animate.enter="entree-montee" [style.--rang]="$index">
+                  <code>{{ c }}</code>
+                </li>
+              }
+            </ul>
+            <button mat-flat-button class="principal" (click)="continuer()">
+              {{ 'action.jai_note_continuer' | t }}
+            </button>
+          </div>
+        }
+      }
+    </div>
+    <p class="pied texte-attenue">{{ 'connexion.pied' | t }}</p>
+  </section>
+</div>

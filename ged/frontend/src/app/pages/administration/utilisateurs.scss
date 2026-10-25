@@ -1,0 +1,48 @@
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.recherche {
+  flex: 1 1 260px;
+}
+.resultats {
+  position: relative;
+  min-height: 120px;
+}
+.progression {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  z-index: 1;
+}
+.personne {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ged-primaire);
+  background: var(--mat-sys-primary-container);
+}
+.nom-ar {
+  display: block;
+  font-size: 12px;
+}
+mat-icon.ok {
+  color: var(--ged-succes);
+}
+mat-icon.ko {
+  color: #b0b8c4;
+}

@@ -1,0 +1,86 @@
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  mat-icon {
+    color: var(--ged-primaire);
+  }
+}
+.bloc {
+  margin-top: 20px;
+}
+.fiche {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px 20px;
+  margin: 0 0 16px;
+}
+.fiche dt {
+  color: var(--ged-texte-attenue);
+}
+.fiche dd {
+  margin: 0;
+  font-weight: 500;
+}
+.sous-titre {
+  margin: 8px 0;
+  color: var(--ged-texte-attenue);
+  font-size: 14px;
+}
+.etat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.etat.succes {
+  color: var(--ged-succes);
+}
+.etat.avertissement {
+  color: var(--ged-avertissement);
+}
+.petit {
+  font-size: 13px;
+}
+.danger {
+  --mat-button-text-label-text-color: var(--ged-alerte);
+}
+.liste {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.liste li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  transition: background 160ms;
+}
+.liste li:hover {
+  background: color-mix(in srgb, var(--ged-primaire) 4%, transparent);
+}
+.delegation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-top: 8px;
+  background: color-mix(in srgb, var(--ged-primaire) 6%, white);
+}
+.delegation.recue {
+  background: color-mix(in srgb, var(--ged-secondaire) 8%, white);
+}
+mat-button-toggle-group {
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}

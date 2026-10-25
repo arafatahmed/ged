@@ -1,0 +1,123 @@
+<ged-entete-page [titre]="'utilisateurs.titre' | t" [sousTitre]="'utilisateurs.sous_titre' | t" icone="group">
+  <a mat-stroked-button [href]="urlRevue" download><mat-icon>download</mat-icon>{{ 'utilisateurs.revue' | t }}</a>
+  <button mat-flat-button (click)="creer()"><mat-icon>person_add</mat-icon>{{ 'utilisateurs.nouveau' | t }}</button>
+</ged-entete-page>
+
+<div class="carte filtres" animate.enter="entree-montee">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="recherche">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>{{ 'utilisateurs.rechercher' | t }}</mat-label>
+    <input matInput [ngModel]="recherche()" (ngModelChange)="recherche.set($event)" />
+  </mat-form-field>
+  <mat-chip-listbox
+    [value]="statut()"
+    (change)="filtrer('statut', $event.value)"
+    [attr.aria-label]="'champ.statut' | t"
+  >
+    <mat-chip-option value="">{{ 'utilisateurs.tous' | t }}</mat-chip-option>
+    <mat-chip-option value="actifs">{{ 'utilisateurs.actifs' | t }}</mat-chip-option>
+    <mat-chip-option value="inactifs">{{ 'utilisateurs.inactifs' | t }}</mat-chip-option>
+    <mat-chip-option value="verrouilles">{{ 'utilisateurs.verrouilles' | t }}</mat-chip-option>
+  </mat-chip-listbox>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ 'champ.unite' | t }}</mat-label>
+    <mat-select [value]="unite()" (selectionChange)="filtrer('unite', $event.value)">
+      <mat-option value="">{{ 'utilisateurs.toutes_unites' | t }}</mat-option>
+      @for (u of options()?.unites ?? []; track u.uuid) {
+        <mat-option [value]="u.uuid"
+          ><span [style.padding-inline-start.px]="u.profondeur * 14">{{ u.libelle }}</span></mat-option
+        >
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ 'utilisateurs.trier' | t }}</mat-label>
+    <mat-select [value]="tri()" (selectionChange)="filtrer('tri', $event.value)">
+      <mat-option value="nom">{{ 'champ.nom' | t }}</mat-option>
+      <mat-option value="identifiant">{{ 'champ.identifiant' | t }}</mat-option>
+      <mat-option value="connexion">{{ 'utilisateurs.derniere_connexion' | t }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="tableau-conteneur resultats">
+  @if (chargement()) {
+    <mat-progress-bar mode="indeterminate" class="progression" />
+  }
+  @if (page(); as p) {
+    @if (p.resultats.length) {
+      <table mat-table [dataSource]="p.resultats">
+        <ng-container matColumnDef="nom">
+          <th mat-header-cell *matHeaderCellDef>{{ 'champ.nom' | t }}</th>
+          <td mat-cell *matCellDef="let c">
+            <span class="personne">
+              <span class="avatar" aria-hidden="true">{{ c.prenom.charAt(0) }}{{ c.nom.charAt(0) }}</span>
+              <span
+                ><strong>{{ c.nom }} {{ c.prenom }}</strong>
+                @if (c.nom_ar) {
+                  <span class="texte-attenue nom-ar" lang="ar">{{ c.nom_ar }}</span>
+                }
+              </span>
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="identifiant">
+          <th mat-header-cell *matHeaderCellDef>{{ 'champ.identifiant' | t }}</th>
+          <td mat-cell *matCellDef="let c" class="ltr">{{ c.identifiant }}</td>
+        </ng-container>
+        <ng-container matColumnDef="statut">
+          <th mat-header-cell *matHeaderCellDef>{{ 'champ.statut' | t }}</th>
+          <td mat-cell *matCellDef="let c">
+            @if (!c.actif) {
+              <span class="pastille">{{ 'utilisateurs.etat_desactive' | t }}</span>
+            } @else if (c.verrouille) {
+              <span class="pastille alerte"
+                ><mat-icon inline>lock</mat-icon>{{ 'utilisateurs.etat_verrouille' | t }}</span
+              >
+            } @else {
+              <span class="pastille succes">{{ 'utilisateurs.etat_actif' | t }}</span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="mfa">
+          <th mat-header-cell *matHeaderCellDef>{{ 'compte.mfa' | t }}</th>
+          <td mat-cell *matCellDef="let c">
+            <mat-icon
+              [class.ok]="c.mfa_active"
+              [class.ko]="!c.mfa_active"
+              [matTooltip]="(c.mfa_active ? 'compte.mfa_active' : 'compte.mfa_inactive') | t"
+            >
+              {{ c.mfa_active ? 'verified_user' : 'remove_moderator' }}
+            </mat-icon>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="connexion">
+          <th mat-header-cell *matHeaderCellDef>{{ 'utilisateurs.derniere_connexion' | t }}</th>
+          <td mat-cell *matCellDef="let c" class="texte-attenue">
+            {{ c.derniere_connexion | dateLocale: 'dateHeure' }}
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="colonnes"></tr>
+        <tr
+          mat-row
+          *matRowDef="let c; columns: colonnes; let i = index"
+          class="ligne-cliquable"
+          tabindex="0"
+          (click)="ouvrir(c)"
+          (keydown.enter)="ouvrir(c)"
+          animate.enter="entree-montee"
+          [style.--rang]="i"
+        ></tr>
+      </table>
+      <mat-paginator
+        [length]="p.nombre"
+        [pageSize]="25"
+        [pageIndex]="p.page - 1"
+        [hidePageSize]="true"
+        (page)="changerPage($event)"
+      />
+    } @else {
+      <ged-etat-vide icone="person_search" [message]="'utilisateurs.aucun' | t" />
+    }
+  }
+</div>

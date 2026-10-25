@@ -1,0 +1,8 @@
+# Poste de développement : seulement PostgreSQL, exposé en local, pour
+# « python manage.py runserver ». Usage :
+#   docker compose -f compose.yaml -f compose.dev.yaml up postgres
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks: [interne, frontal]

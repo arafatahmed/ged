@@ -1,0 +1,98 @@
+# Pile complète de la GED (recette et production sur un serveur).
+# Préalables : copier .env.exemple en .env et le compléter ; créer le certificat
+# (docker/nginx/generer-certificat-recette.sh en recette). Voir README.md.
+name: ged
+
+services:
+  postgres:
+    image: postgres:16.10-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?à définir dans .env}
+      GED_DB_NAME: ${GED_DB_NAME:-ged}
+      GED_DB_OWNER_USER: ${GED_DB_OWNER_USER:-ged_proprietaire}
+      GED_DB_OWNER_PASSWORD: ${GED_DB_OWNER_PASSWORD:?à définir dans .env}
+      GED_DB_USER: ${GED_DB_USER:-ged_app}
+      GED_DB_PASSWORD: ${GED_DB_PASSWORD:?à définir dans .env}
+    volumes:
+      - donnees_postgres:/var/lib/postgresql/data
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${GED_DB_NAME:-ged}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [interne]
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    # Cache et limitation de débit uniquement : aucune persistance nécessaire.
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    networks: [interne]
+
+  stockage:
+    # Tout stockage compatible S3 convient (l'application n'utilise que l'API S3).
+    image: ${GED_IMAGE_S3:-quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z}
+    restart: unless-stopped
+    command: ["server", "/data"]
+    environment:
+      MINIO_ROOT_USER: ${GED_S3_ACCESS_KEY:?à définir dans .env}
+      MINIO_ROOT_PASSWORD: ${GED_S3_SECRET_KEY:?à définir dans .env}
+    volumes:
+      - donnees_stockage:/data
+    networks: [interne]
+
+  web:
+    build: .
+    image: ged-web:${GED_VERSION:-dev}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+      GED_DB_HOST: postgres
+      GED_DB_ROLE_APPLICATIF: ${GED_DB_USER:-ged_app}
+      GED_REDIS_URL: redis://redis:6379/0
+      GED_S3_ENDPOINT: http://stockage:9000
+      GED_PROXY_DE_CONFIANCE: "true"
+      GED_STATIC_ROOT: /srv/static
+      GED_AUDIT_SCELLEMENT_DIR: /srv/scellements
+    volumes:
+      - statiques:/srv/static
+      - scellements:/srv/scellements
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      stockage:
+        condition: service_started
+    networks: [interne, frontal]
+
+  nginx:
+    # Frontal : application Angular compilée + reverse proxy (docker/nginx/Dockerfile).
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    image: ged-frontal:${GED_VERSION:-dev}
+    restart: unless-stopped
+    ports:
+      - "${GED_PORT_HTTP:-80}:80"
+      - "${GED_PORT_HTTPS:-443}:443"
+    volumes:
+      - ./docker/nginx/certs:/etc/nginx/certs:ro
+      - statiques:/srv/static:ro
+    depends_on: [web]
+    networks: [frontal]
+
+networks:
+  # Réseau interne sans accès à l'extérieur : aucun document ne peut sortir par là.
+  interne:
+    internal: true
+  frontal: {}
+
+volumes:
+  donnees_postgres:
+  donnees_stockage:
+  statiques:
+  scellements:

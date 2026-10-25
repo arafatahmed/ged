@@ -1,0 +1,316 @@
+<a mat-button routerLink="/administration/utilisateurs" class="retour"
+  ><mat-icon class="icone-directionnelle">arrow_back</mat-icon>{{ 'utilisateur.retour' | t }}</a
+>
+
+@if (introuvable()) {
+  <div class="carte"><ged-etat-vide icone="person_off" [message]="'utilisateur.introuvable' | t" /></div>
+} @else if (compte(); as c) {
+  <section class="carte identite" animate.enter="entree-fondu">
+    <span class="avatar" aria-hidden="true">{{ c.prenom.charAt(0) }}{{ c.nom.charAt(0) }}</span>
+    <div class="identite-texte">
+      <h1>{{ c.prenom }} {{ c.nom }}</h1>
+      <p class="texte-attenue">
+        <span class="ltr">{{ c.identifiant }}</span>
+        @if (c.nom_ar) {
+          · <span lang="ar">{{ c.nom_ar }}</span>
+        }
+      </p>
+      <div class="ligne">
+        @if (!c.actif) {
+          <span class="pastille">{{ 'utilisateurs.etat_desactive' | t }}</span>
+        } @else if (c.verrouille) {
+          <span class="pastille alerte"><mat-icon inline>lock</mat-icon>{{ 'utilisateurs.etat_verrouille' | t }}</span>
+        } @else {
+          <span class="pastille succes">{{ 'utilisateurs.etat_actif' | t }}</span>
+        }
+        <span class="pastille" [class.succes]="c.mfa_active" [class.avertissement]="!c.mfa_active">
+          <mat-icon inline>{{ c.mfa_active ? 'verified_user' : 'gpp_maybe' }}</mat-icon
+          >{{ (c.mfa_active ? 'compte.mfa_active' : 'compte.mfa_inactive') | t }}
+        </span>
+        @if (c.doit_changer_mot_de_passe) {
+          <span class="pastille info">{{ 'utilisateur.mdp_temporaire' | t }}</span>
+        }
+      </div>
+    </div>
+    <dl class="chiffres">
+      <div>
+        <dt>{{ 'utilisateurs.derniere_connexion' | t }}</dt>
+        <dd>{{ c.derniere_connexion | dateLocale: 'dateHeure' }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'utilisateur.echecs' | t }}</dt>
+        <dd>{{ c.echecs_connexion }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'compte.affectations' | t }}</dt>
+        <dd>{{ enCours().length }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <mat-tab-group animationDuration="250ms" mat-stretch-tabs="false" class="onglets">
+    <mat-tab [label]="'utilisateur.onglet_affectations' | t">
+      <section class="carte" animate.enter="entree-montee">
+        @if (enCours().length) {
+          <ul class="affectations">
+            @for (a of enCours(); track a.uuid) {
+              <li animate.enter="entree-montee" [style.--rang]="$index">
+                <span class="pastille info">{{ a.unite_libelle }}</span>
+                <span class="role"
+                  ><strong>{{ a.role_libelle | bilingue: a.role_libelle_ar }}</strong>
+                  <span class="texte-attenue"
+                    >{{ 'utilisateur.depuis' | t: { date: (a.date_debut | dateLocale) } }}
+                    @if (a.date_fin) {
+                      · {{ 'compte.jusqu_au' | t: { date: (a.date_fin | dateLocale) } }}
+                    }
+                    @if (a.attribuee_par) {
+                      · {{ 'utilisateur.par' | t: { nom: a.attribuee_par } }}
+                    }
+                  </span>
+                </span>
+                @if (a.etendue_sous_unites) {
+                  <span class="pastille">{{ 'compte.sous_unites' | t }}</span>
+                }
+                @if (a.poste_libelle) {
+                  <span class="pastille">{{ a.poste_libelle }}</span>
+                }
+                <span class="espace"></span>
+                <button mat-button (click)="cloturer(a.uuid, a.role_libelle)">{{ 'utilisateur.cloturer' | t }}</button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <ged-etat-vide icone="work_off" [message]="'compte.aucune_affectation' | t" />
+        }
+
+        <h3>{{ 'utilisateur.ajouter_affectation' | t }}</h3>
+        <form [formGroup]="affectation" (ngSubmit)="ajouterAffectation()" class="formulaire-grille" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'champ.unite' | t }}</mat-label>
+            <mat-select formControlName="unite">
+              @for (u of options()?.unites ?? []; track u.uuid) {
+                <mat-option [value]="u.uuid"
+                  ><span [style.padding-inline-start.px]="u.profondeur * 14">{{ u.libelle }}</span></mat-option
+                >
+              }
+            </mat-select>
+            @if (erreursAffectation()['unite']) {
+              <mat-error>{{ erreursAffectation()['unite'] }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'champ.role' | t }}</mat-label>
+            <mat-select formControlName="role">
+              @for (r of options()?.roles ?? []; track r.uuid) {
+                <mat-option [value]="r.uuid"
+                  >{{ r.libelle | bilingue: r.libelle_ar }}
+                  @if (r.mfa_requis) {
+                    <mat-icon inline>shield</mat-icon>
+                  }
+                </mat-option>
+              }
+            </mat-select>
+            @if (erreursAffectation()['role']) {
+              <mat-error>{{ erreursAffectation()['role'] }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'champ.poste' | t }}</mat-label>
+            <mat-select formControlName="poste">
+              <mat-option [value]="null">—</mat-option>
+              @for (p of postesDeLUnite(); track p.id) {
+                <mat-option [value]="p.id">{{ p.libelle }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'champ.date_debut' | t }}</mat-label>
+            <input matInput type="date" formControlName="date_debut" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'champ.date_fin' | t }}</mat-label>
+            <input matInput type="date" formControlName="date_fin" />
+            @if (erreursAffectation()['date_fin']) {
+              <mat-error>{{ erreursAffectation()['date_fin'] }}</mat-error>
+            }
+          </mat-form-field>
+          <div class="case">
+            <mat-checkbox formControlName="etendue_sous_unites">{{ 'utilisateur.etendue' | t }}</mat-checkbox>
+          </div>
+          <div class="actions-formulaire">
+            <button mat-flat-button type="submit" [disabled]="envoi() || affectation.invalid">
+              <mat-icon>add</mat-icon>{{ 'action.ajouter' | t }}
+            </button>
+          </div>
+        </form>
+
+        @if (passees().length) {
+          <h3>{{ 'utilisateur.historique' | t }}</h3>
+          <ul class="affectations passees">
+            @for (a of passees(); track a.uuid) {
+              <li>
+                <span class="pastille">{{ a.unite_libelle }}</span>
+                <span class="role"
+                  ><span>{{ a.role_libelle | bilingue: a.role_libelle_ar }}</span>
+                  <span class="texte-attenue"
+                    >{{ a.date_debut | dateLocale: 'court' }} → {{ a.date_fin | dateLocale: 'court' }}</span
+                  ></span
+                >
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </mat-tab>
+
+    <mat-tab [label]="'utilisateur.onglet_profil' | t">
+      <section class="carte" animate.enter="entree-montee">
+        <form [formGroup]="profil" (ngSubmit)="enregistrerProfil()" class="formulaire-grille" novalidate>
+          <mat-form-field appearance="outline"
+            ><mat-label>{{ 'champ.nom' | t }}</mat-label
+            ><input matInput formControlName="nom"
+          /></mat-form-field>
+          <mat-form-field appearance="outline"
+            ><mat-label>{{ 'champ.prenom' | t }}</mat-label
+            ><input matInput formControlName="prenom"
+          /></mat-form-field>
+          <mat-form-field appearance="outline"
+            ><mat-label>{{ 'champ.nom_ar' | t }}</mat-label
+            ><input matInput formControlName="nom_ar" dir="rtl" lang="ar"
+          /></mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'champ.courriel' | t }}</mat-label
+            ><input matInput formControlName="courriel" dir="ltr" />
+            @if (erreursProfil()['courriel']) {
+              <mat-error>{{ erreursProfil()['courriel'] }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'champ.langue' | t }}</mat-label>
+            <mat-select formControlName="langue">
+              <mat-option value="">{{ 'compte.langue_institution' | t }}</mat-option>
+              @for (l of options()?.langues ?? []; track l.valeur) {
+                <mat-option [value]="l.valeur">{{ l.libelle }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'champ.niveau' | t }}</mat-label>
+            <mat-select formControlName="niveau_habilitation">
+              @for (n of niveauxProposes(); track n.valeur) {
+                <mat-option [value]="n.valeur">{{ n.libelle }}</mat-option>
+              }
+            </mat-select>
+            @if (erreursProfil()['niveau_habilitation']) {
+              <mat-error>{{ erreursProfil()['niveau_habilitation'] }}</mat-error>
+            }
+          </mat-form-field>
+          <div class="actions-formulaire">
+            <button mat-flat-button type="submit" [disabled]="envoi() || profil.invalid || profil.pristine">
+              {{ 'action.enregistrer' | t }}
+            </button>
+          </div>
+        </form>
+      </section>
+    </mat-tab>
+
+    <mat-tab [label]="'utilisateur.onglet_securite' | t">
+      <div class="grille actions-securite" animate.enter="entree-montee">
+        @if (c.actif) {
+          <button
+            class="carte carte-interactive action danger"
+            (click)="
+              action('desactiver', 'utilisateur.desactive', {
+                titre: 'utilisateur.desactiver_titre',
+                texte: 'utilisateur.desactiver_message',
+                danger: true,
+                motif: true,
+              })
+            "
+          >
+            <mat-icon>person_off</mat-icon><strong>{{ 'utilisateur.desactiver' | t }}</strong
+            ><span class="texte-attenue">{{ 'utilisateur.desactiver_aide' | t }}</span>
+          </button>
+        } @else {
+          <button class="carte carte-interactive action" (click)="action('reactiver', 'utilisateur.reactive')">
+            <mat-icon>person_check</mat-icon><strong>{{ 'utilisateur.reactiver' | t }}</strong
+            ><span class="texte-attenue">{{ 'utilisateur.reactiver_aide' | t }}</span>
+          </button>
+        }
+        <button class="carte carte-interactive action" (click)="reinitialiserMotDePasse()">
+          <mat-icon>lock_reset</mat-icon><strong>{{ 'utilisateur.mdp_titre' | t }}</strong
+          ><span class="texte-attenue">{{ 'utilisateur.mdp_aide' | t }}</span>
+        </button>
+        @if (c.verrouille) {
+          <button class="carte carte-interactive action" (click)="action('deverrouiller', 'utilisateur.deverrouille')">
+            <mat-icon>lock_open</mat-icon><strong>{{ 'utilisateur.deverrouiller' | t }}</strong
+            ><span class="texte-attenue">{{ 'utilisateur.deverrouiller_aide' | t }}</span>
+          </button>
+        }
+        @if (c.mfa_active) {
+          <button
+            class="carte carte-interactive action"
+            (click)="
+              action('mfa', 'utilisateur.mfa_reinitialisee', {
+                titre: 'utilisateur.mfa_titre',
+                texte: 'utilisateur.mfa_message',
+              })
+            "
+          >
+            <mat-icon>phonelink_erase</mat-icon><strong>{{ 'utilisateur.mfa_titre' | t }}</strong
+            ><span class="texte-attenue">{{ 'utilisateur.mfa_aide' | t }}</span>
+          </button>
+        }
+        <button class="carte carte-interactive action" (click)="action('sessions', 'utilisateur.sessions_fermees')">
+          <mat-icon>logout</mat-icon><strong>{{ 'utilisateur.fermer_sessions' | t }}</strong
+          ><span class="texte-attenue">{{ 'utilisateur.fermer_sessions_aide' | t }}</span>
+        </button>
+        <button class="carte carte-interactive action" (click)="deleguer()">
+          <mat-icon>supervisor_account</mat-icon><strong>{{ 'utilisateur.deleguer' | t }}</strong
+          ><span class="texte-attenue">{{ 'utilisateur.deleguer_aide' | t }}</span>
+        </button>
+      </div>
+    </mat-tab>
+
+    <mat-tab [label]="'utilisateur.onglet_activite' | t">
+      <div class="grille" animate.enter="entree-montee">
+        <section class="carte">
+          <h3>{{ 'utilisateur.sessions' | t }}</h3>
+          <ul class="chronologie">
+            @for (s of c.sessions; track s.debut) {
+              <li [class.ouverte]="!s.fin">
+                <strong>{{ s.debut | dateLocale: 'dateHeure' }}</strong>
+                <span class="texte-attenue"
+                  ><span class="ltr">{{ s.adresse_ip || '?' }}</span> ·
+                  {{ s.fin ? s.motif_fin : ('utilisateur.session_ouverte' | t) }}</span
+                >
+              </li>
+            } @empty {
+              <li class="texte-attenue">{{ 'utilisateur.aucune_session' | t }}</li>
+            }
+          </ul>
+        </section>
+        <section class="carte">
+          <h3>{{ 'compte.delegations' | t }}</h3>
+          <ul class="chronologie">
+            @for (d of c.delegations; track d.uuid) {
+              <li>
+                <strong>{{ d.delegant }} → {{ d.delegataire }}</strong>
+                <span class="texte-attenue"
+                  >{{ d.debut | dateLocale: 'court' }} – {{ d.fin | dateLocale: 'court' }}
+                  @if (d.revoquee) {
+                    · {{ 'utilisateur.revoquee' | t }}
+                  }
+                </span>
+              </li>
+            } @empty {
+              <li class="texte-attenue">{{ 'compte.aucune_delegation' | t }}</li>
+            }
+          </ul>
+        </section>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+} @else {
+  <div class="carte"><ged-squelette [lignes]="8" /></div>
+}

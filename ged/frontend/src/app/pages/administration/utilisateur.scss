@@ -1,0 +1,149 @@
+.retour {
+  margin-bottom: 12px;
+}
+.identite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  background: linear-gradient(120deg, white 60%, color-mix(in srgb, var(--ged-primaire) 6%, white));
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  font-size: 26px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(
+    135deg,
+    var(--ged-primaire),
+    color-mix(in srgb, var(--ged-primaire) 50%, var(--ged-secondaire))
+  );
+  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--ged-primaire) 80%, transparent);
+}
+.identite-texte {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+.identite-texte p {
+  margin: 4px 0 10px;
+}
+.chiffres {
+  display: flex;
+  gap: 24px;
+  margin: 0;
+}
+.chiffres dt {
+  font-size: 12px;
+  color: var(--ged-texte-attenue);
+}
+.chiffres dd {
+  margin: 2px 0 0;
+  font-weight: 600;
+}
+.onglets section,
+.onglets .grille {
+  margin-top: 16px;
+}
+h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 12px;
+}
+.affectations {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+.affectations li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--ged-bordure);
+}
+.affectations.passees li {
+  opacity: 0.7;
+  border-style: dashed;
+}
+.role {
+  display: flex;
+  flex-direction: column;
+  .texte-attenue {
+    font-size: 12px;
+  }
+}
+.case {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+}
+.actions-formulaire {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+}
+.actions-securite {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+.action {
+  display: grid;
+  gap: 6px;
+  text-align: start;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  mat-icon {
+    color: var(--ged-primaire);
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+  .texte-attenue {
+    font-size: 13px;
+  }
+  &.danger mat-icon {
+    color: var(--ged-alerte);
+  }
+}
+.chronologie {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+.chronologie li {
+  display: grid;
+  gap: 2px;
+  padding-inline-start: 18px;
+  position: relative;
+  font-size: 14px;
+}
+.chronologie li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c7ced9;
+}
+.chronologie li.ouverte::before {
+  background: var(--ged-succes);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ged-succes) 20%, transparent);
+}

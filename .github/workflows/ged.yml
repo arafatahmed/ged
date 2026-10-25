@@ -1,0 +1,85 @@
+name: GED
+
+on:
+  push:
+    paths: ["ged/**", "docs/ged/**", ".github/workflows/ged.yml"]
+  pull_request:
+    paths: ["ged/**", "docs/ged/**", ".github/workflows/ged.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ged
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ged
+          POSTGRES_PASSWORD: ged
+          POSTGRES_DB: ged
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ged" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      GED_DB_HOST: localhost
+      GED_DB_ROLE_APPLICATIF: ged_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: ged/requirements/*.txt
+      - name: Outils système
+        run: sudo apt-get update && sudo apt-get install -y gettext
+      - name: Dépendances
+        run: pip install -r requirements/dev.txt pip-audit
+      - name: Rôle applicatif PostgreSQL
+        run: PGPASSWORD=ged psql -h localhost -U ged -c "CREATE ROLE ged_app LOGIN PASSWORD 'ged_app'"
+      - name: Analyse statique et formatage
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Vulnérabilités connues des dépendances
+        run: pip-audit -r requirements/base.txt
+      - name: Contrôles Django
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+          DJANGO_SETTINGS_MODULE=config.settings.prod GED_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(50))')" GED_ALLOWED_HOSTS=ged.example python manage.py check --deploy --fail-level WARNING
+      - name: Traductions (tout nouveau texte doit être traduit en arabe)
+        run: |
+          python manage.py makemessages -l ar --no-location --no-obsolete -i "staticfiles/*"
+          python manage.py compilemessages -l ar
+      - name: Tests et couverture
+        run: python -m pytest --create-db --cov --cov-report=term-missing --cov-fail-under=80
+
+  frontend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ged/frontend
+    env:
+      NG_CLI_ANALYTICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ged/frontend/package-lock.json
+      - name: Dépendances
+        run: npm ci --no-audit --no-fund
+      - name: Formatage
+        run: npm run format:verifier
+      - name: Tests unitaires (Vitest)
+        run: npm test
+      - name: Compilation de production (types stricts, traductions complètes, budgets)
+        run: npx ng build --configuration production
+      - name: Vulnérabilités connues des dépendances de production
+        run: npm audit --omit=dev --audit-level=high

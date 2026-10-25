@@ -1,0 +1,27 @@
+[project]
+name = "ged"
+version = "0.1.0"
+description = "Plateforme de gestion électronique des documents pour institutions publiques"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py"]
+addopts = "--reuse-db -p no:cacheprovider"
+
+[tool.coverage.run]
+source = ["noyau", "organisation", "identite", "acces", "audit", "config"]
+omit = ["*/migrations/*", "*/tests/*", "config/wsgi.py", "config/settings/prod.py", "config/settings/dev.py"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+# E/F/W : base ; I : imports ; B : bogues courants ; S : sécurité (règles bandit) ; DJ : Django ; UP : syntaxe moderne
+select = ["E", "F", "W", "I", "B", "S", "DJ", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"*/tests/*" = ["S101", "S105", "S106", "S311"]
+"conftest.py" = ["S101", "S106"]

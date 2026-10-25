@@ -1,0 +1,87 @@
+<div class="application" [dir]="traduction.direction()">
+  <a class="lien-evitement" href="#contenu">{{ 'menu.aller_au_contenu' | t }}</a>
+  <mat-toolbar class="barre">
+    @if (mobile()) {
+      <button mat-icon-button (click)="tiroir.toggle()" [attr.aria-label]="'menu.ouvrir' | t">
+        <mat-icon>menu</mat-icon>
+      </button>
+    }
+    <a routerLink="/" class="marque">
+      @if (session.institution()?.logo) {
+        <img src="/institution/logo/" alt="" width="36" height="36" />
+      } @else {
+        <span class="monogramme" aria-hidden="true">{{ session.institution()?.sigle?.charAt(0) }}</span>
+      }
+      <span class="nom">{{ session.institution()?.nom_fr | bilingue: session.institution()?.nom_ar }}</span>
+    </a>
+    <span class="espace"></span>
+    <mat-button-toggle-group
+      class="langues"
+      hideSingleSelectionIndicator
+      [value]="traduction.langue()"
+      (change)="changerLangue($event.value)"
+      [attr.aria-label]="'menu.langue' | t"
+    >
+      <mat-button-toggle value="fr" lang="fr">FR</mat-button-toggle>
+      <mat-button-toggle value="ar" lang="ar">ع</mat-button-toggle>
+    </mat-button-toggle-group>
+    <button mat-button class="profil" [matMenuTriggerFor]="menuProfil">
+      <span class="avatar" aria-hidden="true">{{ initiales() }}</span>
+      @if (!mobile()) {
+        <span>{{ session.utilisateur()?.nom_complet }}</span>
+      }
+      <mat-icon>expand_more</mat-icon>
+    </button>
+    <mat-menu #menuProfil="matMenu" xPosition="before">
+      <a mat-menu-item routerLink="/compte"><mat-icon>manage_accounts</mat-icon>{{ 'menu.mon_compte' | t }}</a>
+      <mat-divider />
+      <button mat-menu-item (click)="deconnecter()">
+        <mat-icon class="icone-directionnelle">logout</mat-icon>{{ 'menu.deconnexion' | t }}
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="conteneur">
+    <mat-sidenav #tiroir class="tiroir" [mode]="mobile() ? 'over' : 'side'" [opened]="!mobile()" [position]="'start'">
+      <nav [attr.aria-label]="'menu.navigation' | t">
+        <mat-nav-list>
+          @for (entree of principal; track entree.lien) {
+            <a
+              mat-list-item
+              [routerLink]="entree.lien"
+              routerLinkActive="actif"
+              [routerLinkActiveOptions]="{ exact: entree.lien === '/' }"
+              (click)="mobile() && tiroir.close()"
+            >
+              <mat-icon matListItemIcon>{{ entree.icone }}</mat-icon>
+              <span matListItemTitle>{{ entree.libelle | t }}</span>
+            </a>
+          }
+        </mat-nav-list>
+        @if (session.administration()) {
+          <p class="rubrique">{{ 'menu.administration' | t }}</p>
+          <mat-nav-list>
+            @for (entree of administration; track entree.lien) {
+              @if (entree.visible()) {
+                <a
+                  mat-list-item
+                  [routerLink]="entree.lien"
+                  routerLinkActive="actif"
+                  (click)="mobile() && tiroir.close()"
+                >
+                  <mat-icon matListItemIcon>{{ entree.icone }}</mat-icon>
+                  <span matListItemTitle>{{ entree.libelle | t }}</span>
+                </a>
+              }
+            }
+          </mat-nav-list>
+        }
+      </nav>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <main id="contenu" class="contenu" tabindex="-1">
+        <router-outlet />
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
