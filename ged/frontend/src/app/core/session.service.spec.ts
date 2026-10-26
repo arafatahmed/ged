@@ -53,7 +53,14 @@ describe('SessionService', () => {
   });
 
   it('calcule la visibilité de l’administration à partir des droits', () => {
-    const droits = { organisation: false, types_unite: false, utilisateurs: true, roles: false, connexions: false };
+    const droits = {
+      organisation: false,
+      types_unite: false,
+      utilisateurs: true,
+      roles: false,
+      connexions: false,
+      types_document: false,
+    };
     service.appliquer({ authentifie: true, etape: null, utilisateur: null, institution: null, droits });
     expect(service.administration()).toBe(true);
     service.oublier();

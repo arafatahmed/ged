@@ -7,6 +7,8 @@ DEBUG = False
 SECRET_KEY = env("GED_SECRET_KEY", obligatoire=True)
 ALLOWED_HOSTS = env_liste("GED_ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = env_liste("GED_CSRF_TRUSTED_ORIGINS")
+# Aucun fichier n'est publié sans analyse antivirus en recette et en production.
+GED_ANTIVIRUS_HOTE = env("GED_ANTIVIRUS_HOTE", obligatoire=True)
 
 # TLS terminé par Nginx, qui transmet X-Forwarded-Proto.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

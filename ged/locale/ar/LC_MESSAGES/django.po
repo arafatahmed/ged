@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-24 00:29+0000\n"
+"POT-Creation-Date: 2026-10-25 20:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -13,7 +13,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 msgid "Contrôle d'accès"
 msgstr "التحكم في الوصول"
@@ -157,6 +158,333 @@ msgstr "ختم السجل"
 msgid "scellements du journal"
 msgstr "أختام السجل"
 
+msgid "Introuvable."
+msgstr "غير موجود."
+
+msgid "Liste attendue."
+msgstr "يجب إدخال قائمة."
+
+msgid "Documents"
+msgstr "الوثائق"
+
+msgid "Format de fichier non admis."
+msgstr "صيغة الملف غير مقبولة."
+
+msgid "type"
+msgstr "النوع"
+
+msgid "unité propriétaire"
+msgstr "الوحدة المالكة"
+
+msgid "titre"
+msgstr "العنوان"
+
+msgid "objet"
+msgstr "الموضوع"
+
+msgid "date du document"
+msgstr "تاريخ الوثيقة"
+
+msgid "confidentialité"
+msgstr "درجة السرية"
+
+msgid "mots-clés"
+msgstr "الكلمات المفتاحية"
+
+msgid "métadonnées"
+msgstr "البيانات الوصفية"
+
+msgid "commentaire"
+msgstr "تعليق"
+
+msgid "fichier"
+msgstr "الملف"
+
+msgid "document lié"
+msgstr "الوثيقة المرتبطة"
+
+msgid "nature"
+msgstr "الطبيعة"
+
+msgid "identifiant public"
+msgstr "المعرّف العام"
+
+msgid "code"
+msgstr "الرمز"
+
+msgid "libellé en français"
+msgstr "التسمية بالفرنسية"
+
+msgid "libellé en arabe"
+msgstr "التسمية بالعربية"
+
+msgid "catégorie"
+msgstr "الفئة"
+
+msgid "formats autorisés"
+msgstr "الصيغ المسموح بها"
+
+msgid "Codes de formats ; vide : tous les formats admis."
+msgstr "رموز الصيغ؛ إذا تُركت فارغة: جميع الصيغ المقبولة."
+
+msgid "confidentialité par défaut"
+msgstr "درجة السرية الافتراضية"
+
+msgid "actif"
+msgstr "نشط"
+
+msgid "type de document"
+msgstr "نوع الوثيقة"
+
+msgid "types de document"
+msgstr "أنواع الوثائق"
+
+msgid "Format inconnu."
+msgstr "صيغة غير معروفة."
+
+msgid "Texte"
+msgstr "نص"
+
+msgid "Nombre"
+msgstr "عدد"
+
+msgid "Date"
+msgstr "تاريخ"
+
+msgid "Liste de valeurs"
+msgstr "قائمة قيم"
+
+msgid "obligatoire"
+msgstr "إلزامي"
+
+msgid "valeurs de la liste"
+msgstr "قيم القائمة"
+
+msgid "ordre d'affichage"
+msgstr "ترتيب العرض"
+
+msgid "active"
+msgstr "نشطة"
+
+msgid "définition de métadonnée"
+msgstr "تعريف بيان وصفي"
+
+msgid "définitions de métadonnées"
+msgstr "تعريفات البيانات الوصفية"
+
+msgid "Indiquez au moins une valeur."
+msgstr "أدخل قيمة واحدة على الأقل."
+
+msgid "En cours"
+msgstr "قيد الإعداد"
+
+msgid "Validé"
+msgstr "مصادق عليه"
+
+msgid "Archivé"
+msgstr "مؤرشف"
+
+msgid "référence"
+msgstr "المرجع"
+
+msgid "statut"
+msgstr "الحالة"
+
+msgid "version courante"
+msgstr "النسخة الحالية"
+
+msgid "créé par"
+msgstr "أنشأه"
+
+msgid "modifié par"
+msgstr "عُدّل من طرف"
+
+msgid "document"
+msgstr "وثيقة"
+
+msgid "documents"
+msgstr "وثائق"
+
+msgid "Brouillon"
+msgstr "مسودة"
+
+msgid "Validée"
+msgstr "مصادق عليها"
+
+msgid "numéro"
+msgstr "الرقم"
+
+msgid "créée par"
+msgstr "أنشأها"
+
+msgid "créée le"
+msgstr "أُنشئت في"
+
+msgid "version de document"
+msgstr "نسخة الوثيقة"
+
+msgid "versions de document"
+msgstr "نسخ الوثيقة"
+
+msgid "Fichier principal"
+msgstr "الملف الرئيسي"
+
+msgid "Pièce jointe"
+msgstr "مرفق"
+
+msgid "Analyse en cours"
+msgstr "الفحص جارٍ"
+
+msgid "Sain"
+msgstr "سليم"
+
+msgid "Infecté"
+msgstr "مصاب"
+
+msgid "Refusé"
+msgstr "مرفوض"
+
+msgid "version"
+msgstr "النسخة"
+
+msgid "rôle"
+msgstr "دور"
+
+msgid "nom d'origine"
+msgstr "الاسم الأصلي"
+
+msgid "format"
+msgstr "الصيغة"
+
+msgid "type MIME reconnu"
+msgstr "نوع MIME المتعرَّف عليه"
+
+msgid "taille en octets"
+msgstr "الحجم بالبايت"
+
+msgid "empreinte SHA-256"
+msgstr "بصمة SHA-256"
+
+msgid "clé de l'objet"
+msgstr "مفتاح الكائن"
+
+msgid "état de l'analyse"
+msgstr "حالة الفحص"
+
+msgid "motif"
+msgstr "السبب"
+
+msgid "tentatives d'analyse"
+msgstr "محاولات الفحص"
+
+msgid "analysé le"
+msgstr "تاريخ الفحص"
+
+msgid "déposé par"
+msgstr "أودعه"
+
+msgid "déposé le"
+msgstr "تاريخ الإيداع"
+
+msgid "fichier de document"
+msgstr "ملف وثيقة"
+
+msgid "fichiers de document"
+msgstr "ملفات الوثائق"
+
+msgid "Réponse à"
+msgstr "رد على"
+
+msgid "Annule"
+msgstr "يلغي"
+
+msgid "Remplace"
+msgstr "يحل محل"
+
+msgid "Annexe de"
+msgstr "ملحق بـ"
+
+msgid "Voir aussi"
+msgstr "انظر أيضًا"
+
+msgid "source"
+msgstr "المصدر"
+
+msgid "cible"
+msgstr "الهدف"
+
+msgid "relation entre documents"
+msgstr "علاقة بين وثائق"
+
+msgid "relations entre documents"
+msgstr "علاقات بين الوثائق"
+
+#, python-format
+msgid "Texte de %(max)d caractères au plus attendu."
+msgstr "يجب إدخال نص لا يتجاوز %(max)d حرفًا."
+
+msgid "Nombre attendu."
+msgstr "يجب إدخال عدد."
+
+msgid "Date attendue (AAAA-MM-JJ)."
+msgstr "يجب إدخال تاريخ (AAAA-MM-JJ)."
+
+msgid "Valeur hors de la liste."
+msgstr "القيمة ليست ضمن القائمة."
+
+msgid "Objet attendu."
+msgstr "يجب إدخال كائن."
+
+msgid "Métadonnée inconnue pour ce type de document."
+msgstr "بيان وصفي غير معروف لهذا النوع من الوثائق."
+
+msgid "Ce champ est obligatoire."
+msgstr "هذا الحقل إلزامي."
+
+msgid "Liste de mots-clés attendue."
+msgstr "يجب إدخال قائمة كلمات مفتاحية."
+
+#, python-format
+msgid "%(max)d mots-clés au plus."
+msgstr "%(max)d كلمة مفتاحية على الأكثر."
+
+msgid "Vous ne pouvez pas attribuer un niveau supérieur à votre habilitation."
+msgstr "لا يمكنك إسناد درجة أعلى من درجة تأهيلك."
+
+msgid "Le fichier est vide."
+msgstr "الملف فارغ."
+
+#, python-format
+msgid "Le fichier dépasse la taille maximale de %(max)d Mo."
+msgstr "يتجاوز الملف الحجم الأقصى البالغ %(max)d ميغابايت."
+
+msgid ""
+"Le contenu du fichier ne correspond pas à un format admis ou ne correspond "
+"pas à son extension."
+msgstr "محتوى الملف لا يطابق صيغة مقبولة أو لا يطابق امتداده."
+
+#, python-format
+msgid "Le format %(format)s n'est pas admis pour ce type de document."
+msgstr "الصيغة %(format)s غير مقبولة لهذا النوع من الوثائق."
+
+msgid "Type de document inconnu ou inactif."
+msgstr "نوع وثيقة غير معروف أو غير نشط."
+
+msgid "Ajoutez d'abord le fichier principal du document."
+msgstr "أضف أولًا الملف الرئيسي للوثيقة."
+
+msgid "Ce fichier n'est pas disponible : analyse en cours, ou fichier refusé."
+msgstr "هذا الملف غير متاح: الفحص جارٍ، أو الملف مرفوض."
+
+msgid "Un document ne peut pas être relié à lui-même."
+msgstr "لا يمكن ربط وثيقة بنفسها."
+
+msgid "Cette relation existe déjà."
+msgstr "هذه العلاقة موجودة مسبقًا."
+
+msgid "Deux métadonnées portent le même code."
+msgstr "بيانان وصفيان يحملان الرمز نفسه."
+
 msgid ""
 "Identifiant ou mot de passe incorrect, ou compte temporairement verrouillé."
 msgstr "اسم المستخدم أو كلمة المرور غير صحيحة، أو الحساب مقفل مؤقتًا."
@@ -170,7 +498,6 @@ msgstr "انتهت المهلة: سجِّل الدخول من جديد."
 msgid "Code incorrect ou déjà utilisé."
 msgstr "الرمز غير صحيح أو مستعمل من قبل."
 
-#| msgid "Double authentification désactivée."
 msgid "La double authentification est déjà activée."
 msgstr "المصادقة الثنائية مفعَّلة بالفعل."
 
@@ -180,7 +507,6 @@ msgstr "الرمز غير صحيح. تحقق من ساعة هاتفك وأعد �
 msgid "Langue inconnue."
 msgstr "لغة غير معروفة."
 
-#| msgid "Mot de passe temporaire"
 msgid "Mot de passe actuel incorrect."
 msgstr "كلمة المرور الحالية غير صحيحة."
 
@@ -192,18 +518,15 @@ msgid ""
 "désactivée."
 msgstr "يفرض دورك المصادقة الثنائية: لا يمكن تعطيلها."
 
-#| msgid "Double authentification désactivée."
 msgid "La double authentification n'est pas activée."
 msgstr "المصادقة الثنائية غير مفعَّلة."
 
-#| msgid "délégataire"
 msgid "Choisissez un délégataire."
 msgstr "اختر المفوَّض إليه."
 
 msgid "Date et heure attendues."
 msgstr "يجب إدخال التاريخ والوقت."
 
-#| msgid "Indiquez le motif de la désactivation."
 msgid "Indiquez le motif."
 msgstr "حدِّد السبب."
 
@@ -240,9 +563,6 @@ msgstr "البريد"
 msgid "Enregistrer un courrier entrant ou sortant"
 msgstr "تسجيل بريد وارد أو صادر"
 
-msgid "Documents"
-msgstr "الوثائق"
-
 msgid "Créer un document"
 msgstr "إنشاء وثيقة"
 
@@ -255,11 +575,20 @@ msgstr "الاطلاع على البطاقات الوصفية دون المحت�
 msgid "Télécharger le fichier original"
 msgstr "تنزيل الملف الأصلي"
 
+msgid "Télécharger le fichier original de ses propres documents"
+msgstr "تنزيل الملف الأصلي لوثائقه الخاصة"
+
 msgid "Modifier les métadonnées"
 msgstr "تعديل البيانات الوصفية"
 
+msgid "Modifier les métadonnées de ses propres documents"
+msgstr "تعديل البيانات الوصفية لوثائقه الخاصة"
+
 msgid "Ajouter une version"
 msgstr "إضافة نسخة"
+
+msgid "Ajouter une version à ses propres documents"
+msgstr "إضافة نسخة إلى وثائقه الخاصة"
 
 msgid "Changer le niveau de confidentialité"
 msgstr "تغيير مستوى السرية"
@@ -294,11 +623,9 @@ msgstr "تصدير نتائج البحث"
 msgid "Votre session a expiré après une période d'inactivité."
 msgstr "انتهت جلستك بعد فترة من الخمول."
 
-#| msgid "Mot de passe temporaire"
 msgid "Changez votre mot de passe temporaire."
 msgstr "غيِّر كلمة مرورك المؤقتة."
 
-#| msgid "Activer la double authentification"
 msgid "Activez la double authentification."
 msgstr "فعِّل المصادقة الثنائية."
 
@@ -313,9 +640,6 @@ msgstr "سري"
 
 msgid "Secret"
 msgstr "سري للغاية"
-
-msgid "identifiant public"
-msgstr "المعرّف العام"
 
 msgid "Vide uniquement pour le superadministrateur technique."
 msgstr "يُترك فارغًا للمدير التقني الأعلى فقط."
@@ -340,9 +664,6 @@ msgstr "لغة الواجهة"
 
 msgid "Vide : langue par défaut de l'institution."
 msgstr "فارغ: اللغة الافتراضية للمؤسسة."
-
-msgid "actif"
-msgstr "نشط"
 
 msgid "accès à l'administration technique"
 msgstr "الوصول إلى الإدارة التقنية"
@@ -371,29 +692,17 @@ msgstr "مستخدم"
 msgid "utilisateurs"
 msgstr "المستخدمون"
 
-msgid "code"
-msgstr "الرمز"
-
 msgid "groupe"
 msgstr "المجموعة"
 
 msgid "description"
 msgstr "الوصف"
 
-msgid "active"
-msgstr "نشطة"
-
 msgid "permission"
 msgstr "صلاحية"
 
 msgid "permissions"
 msgstr "الصلاحيات"
-
-msgid "libellé en français"
-msgstr "التسمية بالفرنسية"
-
-msgid "libellé en arabe"
-msgstr "التسمية بالعربية"
 
 msgid "double authentification obligatoire"
 msgstr "المصادقة الثنائية إلزامية"
@@ -406,9 +715,6 @@ msgstr "دور مُنشأ عند التثبيت"
 
 msgid "modifié le"
 msgstr "عُدّل في"
-
-msgid "rôle"
-msgstr "دور"
 
 msgid "rôles"
 msgstr "الأدوار"
@@ -434,9 +740,6 @@ msgstr "تاريخ النهاية"
 msgid "attribuée par"
 msgstr "منحه"
 
-msgid "créée le"
-msgstr "أُنشئت في"
-
 msgid "affectation"
 msgstr "تعيين"
 
@@ -460,12 +763,6 @@ msgstr "البداية"
 
 msgid "fin"
 msgstr "النهاية"
-
-msgid "motif"
-msgstr "السبب"
-
-msgid "créée par"
-msgstr "أنشأها"
 
 msgid "révoquée le"
 msgstr "أُلغيت في"
@@ -632,9 +929,6 @@ msgstr "المفتاح"
 msgid "valeur"
 msgstr "القيمة"
 
-msgid "modifié par"
-msgstr "عُدّل من طرف"
-
 msgid "paramètre de l'institution"
 msgstr "إعداد المؤسسة"
 
@@ -664,8 +958,8 @@ msgid "séries de numérotation"
 msgstr "سلاسل الترقيم"
 
 msgid ""
-"Cette série a déjà attribué des numéros : son gabarit et sa portée ne peuvent"
-" plus changer. Créez une nouvelle série."
+"Cette série a déjà attribué des numéros : son gabarit et sa portée ne "
+"peuvent plus changer. Créez une nouvelle série."
 msgstr ""
 "منحت هذه السلسلة أرقامًا بالفعل: لم يعد من الممكن تغيير قالبها ونطاقها. أنشئ "
 "سلسلة جديدة."
@@ -773,17 +1067,11 @@ msgstr "يجب أن يكون الشعار صورة PNG أو JPEG."
 msgid "Organisation"
 msgstr "التنظيم"
 
-msgid "ordre d'affichage"
-msgstr "ترتيب العرض"
-
 msgid "type d'unité"
 msgstr "نوع الوحدة"
 
 msgid "types d'unité"
 msgstr "أنواع الوحدات"
-
-msgid "type"
-msgstr "النوع"
 
 msgid "unité parente"
 msgstr "الوحدة الأم"
@@ -842,7 +1130,6 @@ msgid ""
 "l'institution."
 msgstr "ألحِق الوحدة بوحدة أم: الوحدة الجذرية تمثل المؤسسة."
 
-#| msgid "L'unité parente est désactivée."
 msgid "L'unité racine ne peut pas être déplacée."
 msgstr "لا يمكن نقل الوحدة الجذرية."
 

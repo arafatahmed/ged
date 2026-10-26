@@ -1,0 +1,221 @@
+@if (document(); as d) {
+  <ged-entete-page [titre]="d.titre" [sousTitre]="d.reference ?? ''" icone="description">
+    <a mat-button routerLink="/documents"
+      ><mat-icon class="icone-directionnelle">arrow_back</mat-icon>{{ 'documents.retour' | t }}</a
+    >
+    @if (d.droits.modifier) {
+      <button mat-stroked-button (click)="modifier()"><mat-icon>edit</mat-icon>{{ 'action.modifier' | t }}</button>
+    }
+    @if (d.droits.versionner || (d.droits.modifier && !d.version)) {
+      <button mat-flat-button (click)="ajouterFichier('versions')">
+        <mat-icon>upload_file</mat-icon
+        >{{ (d.version ? 'documents.nouvelle_version' : 'documents.ajouter_fichier') | t }}
+      </button>
+    }
+  </ged-entete-page>
+
+  <div class="pastilles" animate.enter="entree-montee">
+    <span class="pastille info">{{ d.type.libelle_fr | bilingue: d.type.libelle_ar }}</span>
+    <span class="pastille">{{ cleStatut(d.statut) | t }}</span>
+    <ged-pastille-confidentialite [valeur]="d.confidentialite" />
+    @if (enAnalyse()) {
+      <ged-etat-fichier valeur="en_attente" />
+    }
+  </div>
+
+  @if (d.doublons.length) {
+    <div class="carte alerte-doublons" role="status" animate.enter="entree-montee">
+      <mat-icon>content_copy</mat-icon>
+      <div>
+        <strong>{{ 'documents.doublons' | t }}</strong>
+        <ul>
+          @for (lien of d.doublons; track lien.uuid) {
+            <li>
+              <a [routerLink]="['/documents', lien.uuid]">{{ lien.titre }}</a>
+              @if (lien.reference) {
+                <span class="texte-attenue ltr"> · {{ lien.reference }}</span>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  }
+
+  <div class="mise-en-page">
+    <div class="pile">
+      <section class="carte" animate.enter="entree-montee" [attr.aria-label]="'documents.fichiers' | t">
+        <div class="ligne titre-section">
+          <h2>{{ 'documents.fichiers' | t }}</h2>
+          <span class="espace"></span>
+          @if (d.droits.modifier && d.version) {
+            <button mat-stroked-button (click)="ajouterFichier('pieces-jointes')">
+              <mat-icon>attach_file</mat-icon>{{ 'documents.joindre' | t }}
+            </button>
+          }
+        </div>
+        @if (versionCourante(); as v) {
+          <p class="texte-attenue version">
+            {{ 'documents.version_n' | t: { numero: v.numero } }} · {{ v.creee_le | dateLocale: 'dateHeure' }} ·
+            {{ v.creee_par }}
+            @if (v.commentaire) {
+              <br /><em>{{ v.commentaire }}</em>
+            }
+          </p>
+          <ul class="fichiers">
+            @for (f of v.fichiers; track f.uuid) {
+              <li class="fichier" animate.enter="entree-montee">
+                <mat-icon class="icone">{{ f.role === 'principal' ? 'article' : 'attachment' }}</mat-icon>
+                <div class="infos">
+                  <strong class="ltr nom">{{ f.nom }}</strong>
+                  <span class="texte-attenue">
+                    {{ (f.role === 'principal' ? 'documents.principal' : 'documents.piece_jointe') | t }} ·
+                    {{ f.format_libelle }} · {{ f.taille | tailleFichier }}
+                  </span>
+                  <span class="empreinte ltr" [matTooltip]="f.sha256">SHA-256 {{ f.sha256.slice(0, 16) }}…</span>
+                  @if (f.etat !== 'sain') {
+                    <span class="etat">
+                      <ged-etat-fichier [valeur]="f.etat" />
+                      @if (f.motif) {
+                        <span class="texte-attenue">{{ f.motif }}</span>
+                      }
+                    </span>
+                  }
+                </div>
+                <div class="actions">
+                  @if (f.apercu && d.droits.contenu) {
+                    <button mat-icon-button (click)="afficher(f)" [matTooltip]="'documents.apercu' | t">
+                      <mat-icon>{{ f.format === 'pdf' ? 'open_in_new' : 'visibility' }}</mat-icon>
+                    </button>
+                  }
+                  @if (f.etat === 'sain' && d.droits.telecharger) {
+                    <a
+                      mat-icon-button
+                      [href]="url(f, 'telecharger')"
+                      download
+                      [matTooltip]="'documents.telecharger' | t"
+                    >
+                      <mat-icon>download</mat-icon>
+                    </a>
+                  }
+                </div>
+              </li>
+              @if (apercu()?.uuid === f.uuid) {
+                <li class="apercu" animate.enter="entree-zoom">
+                  <img [src]="url(f, 'apercu')" [alt]="f.nom" />
+                </li>
+              }
+            }
+          </ul>
+        } @else {
+          <p class="texte-attenue">{{ 'documents.sans_fichier' | t }}</p>
+        }
+        @if (anciennes().length) {
+          <details class="historique">
+            <summary>{{ 'documents.versions_precedentes' | t: { nombre: anciennes().length } }}</summary>
+            <ol>
+              @for (v of anciennes(); track v.numero) {
+                <li>
+                  <strong>v{{ v.numero }}</strong>
+                  <span class="texte-attenue"> · {{ v.creee_le | dateLocale: 'dateHeure' }} · {{ v.creee_par }}</span>
+                  @if (v.commentaire) {
+                    <em> — {{ v.commentaire }}</em>
+                  }
+                  <ul>
+                    @for (f of v.fichiers; track f.uuid) {
+                      <li>
+                        <span class="ltr">{{ f.nom }}</span>
+                        <span class="texte-attenue"> ({{ f.taille | tailleFichier }})</span>
+                        @if (f.etat === 'sain' && d.droits.telecharger) {
+                          <a
+                            mat-icon-button
+                            [href]="url(f, 'telecharger')"
+                            download
+                            [matTooltip]="'documents.telecharger' | t"
+                          >
+                            <mat-icon>download</mat-icon>
+                          </a>
+                        } @else if (f.etat !== 'sain') {
+                          <ged-etat-fichier [valeur]="f.etat" />
+                        }
+                      </li>
+                    }
+                  </ul>
+                </li>
+              }
+            </ol>
+          </details>
+        }
+      </section>
+
+      <section class="carte" animate.enter="entree-montee" [attr.aria-label]="'documents.relations' | t">
+        <div class="ligne titre-section">
+          <h2>{{ 'documents.relations' | t }}</h2>
+          <span class="espace"></span>
+          @if (d.droits.modifier) {
+            <button mat-stroked-button (click)="relier()"><mat-icon>link</mat-icon>{{ 'documents.relier' | t }}</button>
+          }
+        </div>
+        @if (d.relations.length) {
+          <ul class="relations">
+            @for (r of d.relations; track r.id) {
+              <li>
+                <span class="pastille">{{ cleRelation(r.nature, r.sens) | t }}</span>
+                <a [routerLink]="['/documents', r.document.uuid]">{{ r.document.titre }}</a>
+                @if (r.document.reference) {
+                  <span class="texte-attenue ltr">{{ r.document.reference }}</span>
+                }
+                <span class="espace"></span>
+                @if (d.droits.modifier && r.sens === 'sortante') {
+                  <button mat-icon-button (click)="delier(r.id)" [matTooltip]="'documents.delier' | t">
+                    <mat-icon>link_off</mat-icon>
+                  </button>
+                }
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="texte-attenue">{{ 'documents.aucune_relation' | t }}</p>
+        }
+      </section>
+    </div>
+
+    <section class="carte fiche" animate.enter="entree-montee" [attr.aria-label]="'documents.fiche' | t">
+      <h2>{{ 'documents.fiche' | t }}</h2>
+      <dl>
+        @if (d.objet) {
+          <dt>{{ 'documents.objet' | t }}</dt>
+          <dd class="objet" dir="auto">{{ d.objet }}</dd>
+        }
+        <dt>{{ 'documents.unite_proprietaire' | t }}</dt>
+        <dd dir="auto">{{ d.unite_libelle | bilingue: d.unite_libelle_ar }}</dd>
+        <dt>{{ 'documents.date_document' | t }}</dt>
+        <dd dir="auto">{{ d.date_document | dateLocale }}</dd>
+        @for (m of metadonnees(); track m.definition.code) {
+          <dt>{{ m.definition.libelle_fr | bilingue: m.definition.libelle_ar }}</dt>
+          <dd dir="auto">{{ m.definition.nature === 'date' ? (m.valeur + '' | dateLocale) : m.valeur }}</dd>
+        }
+        <dt>{{ 'documents.cree' | t }}</dt>
+        <dd dir="auto">{{ d.cree_le | dateLocale: 'dateHeure' }} · {{ d.cree_par }}</dd>
+        @if (d.modifie_par) {
+          <dt>{{ 'documents.modifie_le' | t }}</dt>
+          <dd dir="auto">{{ d.modifie_le | dateLocale: 'dateHeure' }} · {{ d.modifie_par }}</dd>
+        }
+      </dl>
+      @if (d.mots_cles.length) {
+        <mat-chip-set [attr.aria-label]="'documents.mots_cles' | t">
+          @for (mot of d.mots_cles; track mot) {
+            <mat-chip>{{ mot }}</mat-chip>
+          }
+        </mat-chip-set>
+      }
+    </section>
+  </div>
+} @else if (introuvable()) {
+  <div class="carte">
+    <p>{{ 'documents.introuvable' | t }}</p>
+    <a mat-stroked-button routerLink="/documents">{{ 'documents.retour' | t }}</a>
+  </div>
+} @else {
+  <div class="carte"><ged-squelette [lignes]="8" /></div>
+}

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
-import { Droits } from './modeles';
+import { Droits, DroitsDocuments } from './modeles';
 import { SessionService } from './session.service';
 
 /** Pages réservées aux utilisateurs connectés ; impose le changement de mot de passe ou la MFA en attente. */
@@ -33,5 +33,13 @@ export function droitGarde(droit: keyof Droits): CanActivateFn {
   return () => {
     const session = inject(SessionService);
     return session.droits()[droit] ? true : inject(Router).parseUrl('/acces-refuse');
+  };
+}
+
+/** Pages des documents : même principe, selon les droits documentaires de la session. */
+export function documentsGarde(droit: keyof DroitsDocuments): CanActivateFn {
+  return () => {
+    const session = inject(SessionService);
+    return session.documents()[droit] ? true : inject(Router).parseUrl('/acces-refuse');
   };
 }

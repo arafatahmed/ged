@@ -13,7 +13,7 @@ import { erreursChamps, messageErreur } from '../../core/notification.service';
 import { BilinguePipe, TraduirePipe } from '../../core/pipes';
 
 /** Base des dialogues de saisie : envoi, erreurs par champ et erreur générale. */
-abstract class DialogueSaisie<R> {
+export abstract class DialogueSaisie<R> {
   protected readonly envoi = signal(false);
   protected readonly erreurs = signal<Record<string, string>>({});
   protected readonly erreurGenerale = signal('');

@@ -46,16 +46,18 @@
       <nav [attr.aria-label]="'menu.navigation' | t">
         <mat-nav-list>
           @for (entree of principal; track entree.lien) {
-            <a
-              mat-list-item
-              [routerLink]="entree.lien"
-              routerLinkActive="actif"
-              [routerLinkActiveOptions]="{ exact: entree.lien === '/' }"
-              (click)="mobile() && tiroir.close()"
-            >
-              <mat-icon matListItemIcon>{{ entree.icone }}</mat-icon>
-              <span matListItemTitle>{{ entree.libelle | t }}</span>
-            </a>
+            @if (entree.visible()) {
+              <a
+                mat-list-item
+                [routerLink]="entree.lien"
+                routerLinkActive="actif"
+                [routerLinkActiveOptions]="{ exact: entree.lien === '/' }"
+                (click)="mobile() && tiroir.close()"
+              >
+                <mat-icon matListItemIcon>{{ entree.icone }}</mat-icon>
+                <span matListItemTitle>{{ entree.libelle | t }}</span>
+              </a>
+            }
           }
         </mat-nav-list>
         @if (session.administration()) {

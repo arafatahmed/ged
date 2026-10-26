@@ -3,6 +3,23 @@
 # (docker/nginx/generer-certificat-recette.sh en recette). Voir README.md.
 name: ged
 
+# Configuration commune aux processus de l'application (web et analyseur).
+x-application: &application
+  build: .
+  image: ged-web:${GED_VERSION:-dev}
+  restart: unless-stopped
+  env_file: .env
+  environment:
+    DJANGO_SETTINGS_MODULE: config.settings.prod
+    GED_DB_HOST: postgres
+    GED_DB_ROLE_APPLICATIF: ${GED_DB_USER:-ged_app}
+    GED_REDIS_URL: redis://redis:6379/0
+    GED_S3_ENDPOINT: http://stockage:9000
+    GED_ANTIVIRUS_HOTE: antivirus
+    GED_PROXY_DE_CONFIANCE: "true"
+    GED_STATIC_ROOT: /srv/static
+    GED_AUDIT_SCELLEMENT_DIR: /srv/scellements
+
 services:
   postgres:
     image: postgres:16.10-bookworm
@@ -32,31 +49,22 @@ services:
     networks: [interne]
 
   stockage:
-    # Tout stockage compatible S3 convient (l'application n'utilise que l'API S3).
-    image: ${GED_IMAGE_S3:-quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z}
+    # SeaweedFS (Apache 2.0). Tout stockage compatible S3 convient : l'application
+    # n'utilise que l'API S3 ; pour un autre service, adapter ce bloc ou pointer
+    # GED_S3_ENDPOINT vers le stockage S3 existant de l'institution.
+    image: chrislusf/seaweedfs:4.47
     restart: unless-stopped
-    command: ["server", "/data"]
+    entrypoint: ["/bin/sh", "/demarrer.sh"]
     environment:
-      MINIO_ROOT_USER: ${GED_S3_ACCESS_KEY:?à définir dans .env}
-      MINIO_ROOT_PASSWORD: ${GED_S3_SECRET_KEY:?à définir dans .env}
+      GED_S3_ACCESS_KEY: ${GED_S3_ACCESS_KEY:?à définir dans .env}
+      GED_S3_SECRET_KEY: ${GED_S3_SECRET_KEY:?à définir dans .env}
     volumes:
       - donnees_stockage:/data
+      - ./docker/stockage/demarrer.sh:/demarrer.sh:ro
     networks: [interne]
 
   web:
-    build: .
-    image: ged-web:${GED_VERSION:-dev}
-    restart: unless-stopped
-    env_file: .env
-    environment:
-      DJANGO_SETTINGS_MODULE: config.settings.prod
-      GED_DB_HOST: postgres
-      GED_DB_ROLE_APPLICATIF: ${GED_DB_USER:-ged_app}
-      GED_REDIS_URL: redis://redis:6379/0
-      GED_S3_ENDPOINT: http://stockage:9000
-      GED_PROXY_DE_CONFIANCE: "true"
-      GED_STATIC_ROOT: /srv/static
-      GED_AUDIT_SCELLEMENT_DIR: /srv/scellements
+    <<: *application
     volumes:
       - statiques:/srv/static
       - scellements:/srv/scellements
@@ -68,6 +76,31 @@ services:
       stockage:
         condition: service_started
     networks: [interne, frontal]
+
+  analyseur:
+    # Analyse des fichiers en quarantaine (antivirus, empreinte, type réel), puis publication.
+    <<: *application
+    command: ["python", "manage.py", "analyser_fichiers", "--boucle"]
+    depends_on:
+      web:
+        condition: service_started
+      antivirus:
+        condition: service_started
+    networks: [interne]
+
+  antivirus:
+    image: clamav/clamav:1.4.5
+    restart: unless-stopped
+    environment:
+      # Taille analysée : à garder au-dessus du paramètre fichiers.taille_max_mo (100 Mo par défaut).
+      CLAMD_CONF_StreamMaxLength: 200M
+      CLAMD_CONF_MaxFileSize: 200M
+      CLAMD_CONF_MaxScanSize: 400M
+    volumes:
+      - signatures_antivirus:/var/lib/clamav
+    # Seul service autorisé à sortir : mise à jour des signatures (freshclam). Sur un réseau
+    # isolé, pointer freshclam vers un miroir interne (FRESHCLAM_CONF_DatabaseMirror).
+    networks: [interne, mises_a_jour]
 
   nginx:
     # Frontal : application Angular compilée + reverse proxy (docker/nginx/Dockerfile).
@@ -90,9 +123,11 @@ networks:
   interne:
     internal: true
   frontal: {}
+  mises_a_jour: {}
 
 volumes:
   donnees_postgres:
   donnees_stockage:
   statiques:
   scellements:
+  signatures_antivirus:

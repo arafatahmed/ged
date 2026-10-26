@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { anonymeGarde, authentifieGarde, droitGarde } from './core/gardes';
+import { anonymeGarde, authentifieGarde, documentsGarde, droitGarde } from './core/gardes';
 
 export const routes: Routes = [
   {
@@ -23,6 +23,21 @@ export const routes: Routes = [
       {
         path: 'compte/double-authentification',
         loadComponent: () => import('./pages/compte/double-authentification').then((m) => m.DoubleAuthentification),
+      },
+      {
+        path: 'documents',
+        canActivate: [documentsGarde('consulter')],
+        loadComponent: () => import('./pages/documents/documents').then((m) => m.Documents),
+      },
+      {
+        path: 'documents/nouveau',
+        canActivate: [documentsGarde('creer')],
+        loadComponent: () => import('./pages/documents/nouveau-document').then((m) => m.NouveauDocument),
+      },
+      {
+        path: 'documents/:uuid',
+        canActivate: [documentsGarde('consulter')],
+        loadComponent: () => import('./pages/documents/document').then((m) => m.FicheDocument),
       },
       {
         path: 'administration',
@@ -52,6 +67,11 @@ export const routes: Routes = [
             path: 'roles',
             canActivate: [droitGarde('roles')],
             loadComponent: () => import('./pages/administration/roles').then((m) => m.Roles),
+          },
+          {
+            path: 'types-document',
+            canActivate: [droitGarde('types_document')],
+            loadComponent: () => import('./pages/administration/types-document').then((m) => m.TypesDocument),
           },
           {
             path: 'connexions',

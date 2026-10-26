@@ -10,7 +10,7 @@ python_files = ["test_*.py"]
 addopts = "--reuse-db -p no:cacheprovider"
 
 [tool.coverage.run]
-source = ["noyau", "organisation", "identite", "acces", "audit", "config"]
+source = ["noyau", "organisation", "identite", "acces", "audit", "documents", "config"]
 omit = ["*/migrations/*", "*/tests/*", "config/wsgi.py", "config/settings/prod.py", "config/settings/dev.py"]
 
 [tool.ruff]

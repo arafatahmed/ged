@@ -1,0 +1,132 @@
+<ged-entete-page [titre]="'documents.nouveau' | t" [sousTitre]="'documents.nouveau_sous_titre' | t" icone="note_add">
+  <a mat-button routerLink="/documents"
+    ><mat-icon class="icone-directionnelle">arrow_back</mat-icon>{{ 'documents.retour' | t }}</a
+  >
+</ged-entete-page>
+
+@if (options(); as o) {
+  @if (!o.types.length || !o.unites.length) {
+    <div class="carte" animate.enter="entree-montee">
+      <p class="texte-attenue">{{ (o.types.length ? 'documents.aucune_unite' : 'documents.aucun_type') | t }}</p>
+    </div>
+  } @else {
+    <div class="mise-en-page" animate.enter="entree-montee">
+      <section class="carte depot" [attr.aria-label]="'documents.fichier' | t">
+        <h2>{{ 'documents.fichier' | t }}</h2>
+        <ged-depot-fichier
+          [extensions]="extensions()"
+          [tailleMaxMo]="o.taille_max_mo"
+          [messageFormat]="'depot.format_refuse' | t"
+          [messageTropGros]="'depot.trop_gros' | t: { taille: o.taille_max_mo }"
+          (fichierChange)="fichier.set($event)"
+        />
+        @if (erreurs()['fichier']) {
+          <p class="erreur" role="alert">{{ erreurs()['fichier'] }}</p>
+        }
+        <p class="texte-attenue aide"><mat-icon inline>shield</mat-icon> {{ 'documents.analyse_aide' | t }}</p>
+        <mat-form-field appearance="outline" class="pleine-largeur">
+          <mat-label>{{ 'documents.commentaire_version' | t }}</mat-label>
+          <input matInput [formControl]="formulaire.controls.commentaire" />
+        </mat-form-field>
+      </section>
+
+      <section class="carte fiche" [attr.aria-label]="'documents.fiche' | t">
+        <h2>{{ 'documents.fiche' | t }}</h2>
+        @if (erreurGenerale() && !erreurs()['fichier']) {
+          <p class="erreur" role="alert">{{ erreurGenerale() }}</p>
+        }
+        <form [formGroup]="formulaire" class="formulaire-grille" novalidate (ngSubmit)="enregistrer()">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'documents.type' | t }}</mat-label>
+            <mat-select [value]="formulaire.controls.type.value" (selectionChange)="choisirType($event.value)" required>
+              @for (t of o.types; track t.uuid) {
+                <mat-option [value]="t.uuid">{{ t.libelle_fr | bilingue: t.libelle_ar }}</mat-option>
+              }
+            </mat-select>
+            @if (erreurs()['type']) {
+              <mat-error>{{ erreurs()['type'] }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'documents.unite_proprietaire' | t }}</mat-label>
+            <mat-select formControlName="unite_proprietaire">
+              @for (u of o.unites; track u.uuid) {
+                <mat-option [value]="u.uuid"
+                  ><span [style.padding-inline-start.px]="u.profondeur * 14">{{
+                    u.libelle_fr | bilingue: u.libelle_ar
+                  }}</span></mat-option
+                >
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="large">
+            <mat-label>{{ 'documents.titre_document' | t }}</mat-label>
+            <input matInput formControlName="titre" maxlength="500" />
+            @if (erreurs()['titre']) {
+              <mat-error>{{ erreurs()['titre'] }}</mat-error>
+            } @else if (formulaire.controls.titre.hasError('required')) {
+              <mat-error>{{ 'erreur.champ_obligatoire' | t }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="large">
+            <mat-label>{{ 'documents.objet' | t }}</mat-label>
+            <textarea matInput formControlName="objet" rows="2"></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'documents.date_document' | t }}</mat-label>
+            <input matInput type="date" formControlName="date_document" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'documents.confidentialite' | t }}</mat-label>
+            <mat-select formControlName="confidentialite">
+              @for (n of o.niveaux; track n.valeur) {
+                <mat-option [value]="n.valeur">{{ n.libelle }}</mat-option>
+              }
+            </mat-select>
+            @if (erreurs()['confidentialite']) {
+              <mat-error>{{ erreurs()['confidentialite'] }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="large">
+            <mat-label>{{ 'documents.mots_cles' | t }}</mat-label>
+            <mat-chip-grid #grille [attr.aria-label]="'documents.mots_cles' | t">
+              @for (mot of motsCles(); track mot) {
+                <mat-chip-row (removed)="retirerMotCle(mot)">
+                  {{ mot }}
+                  <button matChipRemove [attr.aria-label]="'action.retirer' | t"><mat-icon>cancel</mat-icon></button>
+                </mat-chip-row>
+              }
+              <input [matChipInputFor]="grille" (matChipInputTokenEnd)="ajouterMotCle($event)" />
+            </mat-chip-grid>
+            <mat-hint>{{ 'documents.mots_cles_aide' | t }}</mat-hint>
+          </mat-form-field>
+        </form>
+
+        @if (type()?.metadonnees?.length) {
+          <h3>{{ 'documents.metadonnees' | t }}</h3>
+          <div class="formulaire-grille">
+            @for (definition of type()!.metadonnees; track definition.code) {
+              <ged-champ-metadonnee
+                [definition]="definition"
+                [controle]="metadonnees.controls[definition.code]"
+                [erreur]="erreurs()['metadonnees.' + definition.code]"
+              />
+            }
+          </div>
+        }
+
+        @if (envoi()) {
+          <mat-progress-bar mode="indeterminate" />
+        }
+        <div class="actions">
+          <a mat-button routerLink="/documents">{{ 'action.annuler' | t }}</a>
+          <button mat-flat-button type="button" [disabled]="envoi()" (click)="enregistrer()">
+            <mat-icon>save</mat-icon>{{ 'documents.enregistrer' | t }}
+          </button>
+        </div>
+      </section>
+    </div>
+  }
+} @else {
+  <div class="carte"><ged-squelette [lignes]="6" /></div>
+}

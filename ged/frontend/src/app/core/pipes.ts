@@ -41,3 +41,24 @@ export class DateLocalePipe implements PipeTransform {
     return new Intl.DateTimeFormat(this.traduction.locale(), FORMATS[format]).format(date);
   }
 }
+
+/** Taille d'un fichier lisible : {{ octets | tailleFichier }} (unités traduites). */
+@Pipe({ name: 'tailleFichier', pure: false })
+export class TailleFichierPipe implements PipeTransform {
+  private readonly traduction = inject(TraductionService);
+
+  transform(octets: number | null | undefined): string {
+    if (octets === null || octets === undefined) return '—';
+    const unites = ['taille.o', 'taille.ko', 'taille.mo', 'taille.go'] as const;
+    let valeur = octets;
+    let rang = 0;
+    while (valeur >= 1024 && rang < unites.length - 1) {
+      valeur /= 1024;
+      rang++;
+    }
+    const nombre = new Intl.NumberFormat(this.traduction.locale(), { maximumFractionDigits: rang ? 1 : 0 }).format(
+      valeur,
+    );
+    return `${nombre} ${this.traduction.t(unites[rang])}`;
+  }
+}

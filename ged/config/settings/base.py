@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "administration",
     "identite",
     "audit",
+    "documents",
 ]
 
 MIDDLEWARE = [
@@ -131,7 +132,7 @@ TIME_ZONE = env("GED_TIME_ZONE", "UTC")
 STATIC_URL = "/static/"
 STATIC_ROOT = Path(env("GED_STATIC_ROOT", str(BASE_DIR / "staticfiles")))
 
-# Stockage des fichiers : S3 (MinIO ou compatible) si configuré, sinon disque local.
+# Stockage des fichiers : S3 (SeaweedFS ou compatible) si configuré, sinon disque local.
 # Les buckets sont privés ; aucun fichier n'est servi directement au navigateur.
 GED_S3_ENDPOINT = env("GED_S3_ENDPOINT", "")
 if GED_S3_ENDPOINT:
@@ -160,6 +161,12 @@ STORAGES = {
     "default": _stockage_defaut,
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
+
+# Antivirus des fichiers envoyés (démon ClamAV). Sans hôte : aucune analyse antivirus,
+# admis en développement seulement (la production l'exige, voir prod.py).
+GED_ANTIVIRUS_HOTE = env("GED_ANTIVIRUS_HOTE", "")
+GED_ANTIVIRUS_PORT = int(env("GED_ANTIVIRUS_PORT", "3310"))
+GED_ANTIVIRUS_DELAI = int(env("GED_ANTIVIRUS_DELAI", "120"))
 
 GED_REDIS_URL = env("GED_REDIS_URL", "")
 if GED_REDIS_URL:

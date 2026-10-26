@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree, provideRouter } from '@angular/router';
 
-import { anonymeGarde, authentifieGarde, droitGarde } from './gardes';
+import { anonymeGarde, authentifieGarde, documentsGarde, droitGarde } from './gardes';
 import { Session } from './modeles';
 import { SessionService } from './session.service';
 
@@ -16,7 +16,9 @@ class SessionFactice {
       utilisateurs: false,
       roles: false,
       connexions: false,
+      types_document: false,
     };
+  documents = () => this.etat.documents ?? { consulter: false, creer: false };
   pageImposee = () => (this.etat.exigences?.changer_mot_de_passe ? '/compte/mot-de-passe' : null);
 }
 
@@ -61,8 +63,22 @@ describe('Gardes de navigation', () => {
     expect(enTexte(executer(droitGarde('roles'), '/administration/roles') as UrlTree)).toBe('/acces-refuse');
     session.etat = {
       ...session.etat,
-      droits: { organisation: false, types_unite: false, utilisateurs: false, roles: true, connexions: false },
+      droits: {
+        organisation: false,
+        types_unite: false,
+        utilisateurs: false,
+        roles: true,
+        connexions: false,
+        types_document: false,
+      },
     };
     expect(executer(droitGarde('roles'), '/administration/roles')).toBe(true);
+  });
+
+  it('réserve la consultation et la création de documents aux droits documentaires', () => {
+    expect(enTexte(executer(documentsGarde('consulter'), '/documents') as UrlTree)).toBe('/acces-refuse');
+    session.etat = { ...session.etat, documents: { consulter: true, creer: false } };
+    expect(executer(documentsGarde('consulter'), '/documents')).toBe(true);
+    expect(enTexte(executer(documentsGarde('creer'), '/documents/nouveau') as UrlTree)).toBe('/acces-refuse');
   });
 });

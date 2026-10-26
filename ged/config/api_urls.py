@@ -1,6 +1,7 @@
 from django.urls import path
 
 from administration import api as administration
+from documents import api as documents
 from identite import api as identite
 from noyau.api import InstitutionCouranteView
 
@@ -42,12 +43,30 @@ administration_urls = [
     path(f"{prefixe}roles/", administration.roles),
     path(f"{prefixe}roles/<uuid:uuid>/", administration.role),
     path(f"{prefixe}connexions/", administration.connexions),
+    path(f"{prefixe}types-document/", documents.types_document),
+    path(f"{prefixe}types-document/<uuid:uuid>/", documents.type_document),
+]
+
+documents_urls = [
+    path("documents/", documents.documents, name="api_documents"),
+    path("documents/options/", documents.options, name="api_documents_options"),
+    path("documents/<uuid:uuid>/", documents.document, name="api_document"),
+    path("documents/<uuid:uuid>/versions/", documents.versions),
+    path("documents/<uuid:uuid>/pieces-jointes/", documents.pieces_jointes),
+    path("documents/<uuid:uuid>/relations/", documents.relations),
+    path("documents/<uuid:uuid>/relations/<int:pk>/", documents.relation),
+    path(
+        "documents/<uuid:uuid>/fichiers/<uuid:fichier_uuid>/<str:mode>/",
+        documents.fichier,
+        name="api_document_fichier",
+    ),
 ]
 
 urlpatterns = [
     *session,
     *compte,
     *administration_urls,
+    *documents_urls,
     path("institution/", InstitutionCouranteView.as_view(), name="api_institution"),
     path("tableau-de-bord/", administration.tableau_de_bord, name="api_tableau_de_bord"),
 ]

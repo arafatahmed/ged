@@ -5,15 +5,20 @@ import { Observable } from 'rxjs';
 import {
   Compte,
   Delegation,
+  DocumentDetail,
+  DocumentResume,
   Enrolement,
   EvenementConnexion,
+  FormatFichier,
   OptionsDelegation,
+  OptionsDocuments,
   OptionsUtilisateurs,
   Page,
   PermissionCatalogue,
   Poste,
   Role,
   Session,
+  TypeDocument,
   TypeUnite,
   Unite,
   UtilisateurDetail,
@@ -22,6 +27,15 @@ import {
 
 const BASE = '/api/v1';
 const ADMIN = `${BASE}/administration`;
+const DOCUMENTS = `${BASE}/documents`;
+
+function parametres(filtres: Record<string, string | number>): HttpParams {
+  let params = new HttpParams();
+  for (const [cle, valeur] of Object.entries(filtres)) {
+    if (valeur !== '' && valeur !== null && valeur !== undefined) params = params.set(cle, String(valeur));
+  }
+  return params;
+}
 
 /** Accès typé à l'API Django. Les droits sont toujours vérifiés côté serveur. */
 @Injectable({ providedIn: 'root' })
@@ -112,11 +126,7 @@ export class ApiService {
 
   // Utilisateurs
   utilisateurs(filtres: Record<string, string | number>): Observable<Page<UtilisateurResume>> {
-    let params = new HttpParams();
-    for (const [cle, valeur] of Object.entries(filtres)) {
-      if (valeur !== '' && valeur !== null && valeur !== undefined) params = params.set(cle, String(valeur));
-    }
-    return this.http.get<Page<UtilisateurResume>>(`${ADMIN}/utilisateurs/`, { params });
+    return this.http.get<Page<UtilisateurResume>>(`${ADMIN}/utilisateurs/`, { params: parametres(filtres) });
   }
   optionsUtilisateurs(): Observable<OptionsUtilisateurs> {
     return this.http.get<OptionsUtilisateurs>(`${ADMIN}/utilisateurs/options/`);
@@ -167,5 +177,46 @@ export class ApiService {
   connexions(page: number, action: string): Observable<Page<EvenementConnexion> & { actions: string[] }> {
     const params = new HttpParams().set('page', page).set('action', action);
     return this.http.get<Page<EvenementConnexion> & { actions: string[] }>(`${ADMIN}/connexions/`, { params });
+  }
+
+  // Types de documents (administration)
+  typesDocument(): Observable<{ types: TypeDocument[]; formats: FormatFichier[] }> {
+    return this.http.get<{ types: TypeDocument[]; formats: FormatFichier[] }>(`${ADMIN}/types-document/`);
+  }
+  enregistrerTypeDocument(donnees: object, uuid?: string): Observable<TypeDocument> {
+    return uuid
+      ? this.http.patch<TypeDocument>(`${ADMIN}/types-document/${uuid}/`, donnees)
+      : this.http.post<TypeDocument>(`${ADMIN}/types-document/`, donnees);
+  }
+
+  // Documents
+  documents(filtres: Record<string, string | number>): Observable<Page<DocumentResume>> {
+    return this.http.get<Page<DocumentResume>>(`${DOCUMENTS}/`, { params: parametres(filtres) });
+  }
+  optionsDocuments(): Observable<OptionsDocuments> {
+    return this.http.get<OptionsDocuments>(`${DOCUMENTS}/options/`);
+  }
+  /** Création en multipart : les métadonnées et mots-clés voyagent en JSON. */
+  creerDocument(donnees: FormData): Observable<DocumentDetail> {
+    return this.http.post<DocumentDetail>(`${DOCUMENTS}/`, donnees);
+  }
+  document(uuid: string): Observable<DocumentDetail> {
+    return this.http.get<DocumentDetail>(`${DOCUMENTS}/${uuid}/`);
+  }
+  modifierDocument(uuid: string, donnees: object): Observable<DocumentDetail> {
+    return this.http.patch<DocumentDetail>(`${DOCUMENTS}/${uuid}/`, donnees);
+  }
+  ajouterFichier(uuid: string, nature: 'versions' | 'pieces-jointes', donnees: FormData): Observable<DocumentDetail> {
+    return this.http.post<DocumentDetail>(`${DOCUMENTS}/${uuid}/${nature}/`, donnees);
+  }
+  relier(uuid: string, cible: string, nature: string): Observable<DocumentDetail> {
+    return this.http.post<DocumentDetail>(`${DOCUMENTS}/${uuid}/relations/`, { cible, nature });
+  }
+  supprimerRelation(uuid: string, id: number): Observable<DocumentDetail> {
+    return this.http.delete<DocumentDetail>(`${DOCUMENTS}/${uuid}/relations/${id}/`);
+  }
+  /** Adresse d'un fichier : jamais une URL de stockage, toujours l'API qui contrôle les droits. */
+  urlFichier(document: string, fichier: string, mode: 'apercu' | 'telecharger'): string {
+    return `${DOCUMENTS}/${document}/fichiers/${fichier}/${mode}/`;
   }
 }

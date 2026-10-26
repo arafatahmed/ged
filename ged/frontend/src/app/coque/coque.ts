@@ -71,6 +71,12 @@ export class Coque {
   private readonly droits = this.session.droits;
   protected readonly principal: EntreeMenu[] = [
     { lien: '/', icone: 'space_dashboard', libelle: 'menu.accueil', visible: () => true },
+    {
+      lien: '/documents',
+      icone: 'folder_open',
+      libelle: 'menu.documents',
+      visible: () => this.session.documents().consulter,
+    },
     { lien: '/compte', icone: 'manage_accounts', libelle: 'menu.mon_compte', visible: () => true },
   ];
   protected readonly administration: EntreeMenu[] = [
@@ -97,6 +103,12 @@ export class Coque {
       icone: 'shield_person',
       libelle: 'menu.roles',
       visible: () => this.droits().roles,
+    },
+    {
+      lien: '/administration/types-document',
+      icone: 'category',
+      libelle: 'menu.types_document',
+      visible: () => this.droits().types_document,
     },
     {
       lien: '/administration/connexions',

@@ -1,7 +1,7 @@
 # Plateforme GED : dossier de cadrage et de conception
 
-**Statut : cadrage et conception soumis à validation ; lots 1 (socle technique) et 2 (organisation et identité) livrés dans [`ged/`](../../ged/README.md), avec une interface Angular.**
-Voir les comptes rendus des [lot 1](lot-01-compte-rendu.md) et [lot 2](lot-02-compte-rendu.md) et le [dictionnaire de données](dictionnaire-donnees.md), généré depuis le code.
+**Statut : cadrage et conception soumis à validation ; lots 1 (socle technique), 2 (organisation et identité) et 3 (documents et stockage) livrés dans [`ged/`](../../ged/README.md), avec une interface Angular.**
+Voir les comptes rendus des [lot 1](lot-01-compte-rendu.md), [lot 2](lot-02-compte-rendu.md) et [lot 3](lot-03-compte-rendu.md) et le [dictionnaire de données](dictionnaire-donnees.md), généré depuis le code.
 
 ## Contexte
 
@@ -26,6 +26,7 @@ Deux points relevés dans le dépôt GRH concernent directement la GED :
 | 08 | [Hypothèses et questions](08-hypotheses.md) | Ce que l'institution doit confirmer avant le lot 1 |
 | — | [Compte rendu du lot 1](lot-01-compte-rendu.md) | Livrables, tests, écarts, prochaines actions |
 | — | [Compte rendu du lot 2](lot-02-compte-rendu.md) | Organisation, habilitations, sécurité de connexion, écrans d'administration |
+| — | [Compte rendu du lot 3](lot-03-compte-rendu.md) | Documents, versions, quarantaine, antivirus, aperçu et téléchargement contrôlés |
 | — | [Interface Angular](interface-angular-compte-rendu.md) | API REST, interface Angular animée, FR/AR, CSP stricte, tests |
 | — | [Dictionnaire de données](dictionnaire-donnees.md) | Tables et colonnes, généré par `manage.py dictionnaire_donnees` |
 

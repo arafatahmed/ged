@@ -35,6 +35,12 @@ export interface Droits {
   utilisateurs: boolean;
   roles: boolean;
   connexions: boolean;
+  types_document: boolean;
+}
+
+export interface DroitsDocuments {
+  consulter: boolean;
+  creer: boolean;
 }
 
 export interface Session {
@@ -44,6 +50,7 @@ export interface Session {
   institution: Institution | null;
   exigences?: { changer_mot_de_passe: boolean; activer_mfa: boolean };
   droits?: Droits;
+  documents?: DroitsDocuments;
 }
 
 export interface Enrolement {
@@ -210,4 +217,127 @@ export interface EvenementConnexion {
   compte: string;
   adresse_ip: string;
   resultat: 'succes' | 'refus' | 'erreur';
+}
+
+// --- Documents (lot 3) ---------------------------------------------------------------
+
+export type NatureMetadonnee = 'texte' | 'nombre' | 'date' | 'liste';
+export type EtatAnalyse = 'en_attente' | 'sain' | 'infecte' | 'refuse';
+export type StatutDocument = 'brouillon' | 'valide' | 'archive';
+
+export interface DefinitionMetadonnee {
+  code: string;
+  libelle_fr: string;
+  libelle_ar: string;
+  nature: NatureMetadonnee;
+  obligatoire: boolean;
+  valeurs_liste: string[];
+  ordre: number;
+  actif: boolean;
+}
+
+export interface TypeDocument {
+  uuid: string;
+  code: string;
+  libelle_fr: string;
+  libelle_ar: string;
+  categorie: string;
+  formats_autorises: string[];
+  confidentialite_defaut: number;
+  actif: boolean;
+  metadonnees: DefinitionMetadonnee[];
+  documents: number | null;
+}
+
+export interface FormatFichier {
+  code: string;
+  libelle: string;
+  extensions?: string[];
+}
+
+export interface OptionsDocuments {
+  types: TypeDocument[];
+  unites: { uuid: string; libelle_fr: string; libelle_ar: string; profondeur: number }[];
+  niveaux: { valeur: number; libelle: string }[];
+  formats: FormatFichier[];
+  taille_max_mo: number;
+  natures_relation: { valeur: string; libelle: string }[];
+}
+
+export interface DocumentResume {
+  uuid: string;
+  reference: string | null;
+  titre: string;
+  type_libelle: string;
+  type_libelle_ar: string;
+  unite_libelle: string;
+  unite_libelle_ar: string;
+  confidentialite: number;
+  statut: StatutDocument;
+  date_document: string | null;
+  cree_le: string;
+  cree_par: string | null;
+  version: number | null;
+  fichier: { format: string; etat: EtatAnalyse } | null;
+}
+
+export interface FichierDocument {
+  uuid: string;
+  role: 'principal' | 'piece_jointe';
+  nom: string;
+  format: string;
+  format_libelle: string;
+  type_mime: string;
+  taille: number;
+  sha256: string;
+  etat: EtatAnalyse;
+  motif: string;
+  apercu: boolean;
+  depose_le: string;
+  depose_par: string | null;
+}
+
+export interface VersionDocument {
+  numero: number;
+  commentaire: string;
+  statut: string;
+  creee_le: string;
+  creee_par: string | null;
+  courante: boolean;
+  fichiers: FichierDocument[];
+}
+
+export interface LienDocument {
+  uuid: string;
+  reference: string | null;
+  titre: string;
+}
+
+export interface RelationDocument {
+  id: number;
+  nature: string;
+  sens: 'sortante' | 'entrante';
+  document: LienDocument;
+}
+
+export interface DroitsDocument {
+  contenu: boolean;
+  telecharger: boolean;
+  modifier: boolean;
+  versionner: boolean;
+  abaisser_confidentialite: boolean;
+}
+
+export interface DocumentDetail extends DocumentResume {
+  objet: string;
+  mots_cles: string[];
+  metadonnees: Record<string, string | number>;
+  type: TypeDocument;
+  unite: string;
+  modifie_le: string;
+  modifie_par: string | null;
+  droits: DroitsDocument;
+  versions: VersionDocument[];
+  relations: RelationDocument[];
+  doublons: LienDocument[];
 }

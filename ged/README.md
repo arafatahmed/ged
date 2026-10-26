@@ -8,7 +8,7 @@ Architecture : une **API REST Django** (Python 3.13, Django 5.2 LTS, Django REST
 Stockage compatible S3, Redis, Docker Compose. L'authentification se fait par session Django (cookie HttpOnly,
 SameSite=Strict, jeton CSRF), sans jeton stocké dans le navigateur.
 
-## Modules livrés (lots 1 et 2)
+## Modules livrés (lots 1 à 3)
 
 | Module | Rôle |
 |---|---|
@@ -16,7 +16,8 @@ SameSite=Strict, jeton CSRF), sans jeton stocké dans le navigateur.
 | `audit` | Journal d'audit chaîné par SHA-256, en ajout seul (déclencheur PostgreSQL et droits du rôle applicatif), scellement quotidien exporté, vérification |
 | `organisation` | Types d'unité, arbre des unités organisationnelles (chemin matérialisé), postes et hiérarchie |
 | `identite` | Comptes, rôles, permissions, affectations (rôle × unité × période), délégations ; connexion en deux étapes (TOTP et codes de secours), verrouillage, sessions suivies et révocables, expiration d'inactivité, mot de passe temporaire à changer |
-| `acces` | Moteur de décision d'accès : permissions par unité (avec extension aux sous-unités), délégations, habilitation ; refus journalisés |
+| `acces` | Moteur de décision d'accès : permissions par unité (avec extension aux sous-unités), délégations, habilitation ; règles propres aux documents (`acces/documents.py`) ; refus journalisés |
+| `documents` | Types de documents et métadonnées personnalisées, documents, versions, pièces jointes, relations ; envoi en quarantaine, contrôle du type réel, SHA-256, analyseur (ClamAV), doublons visibles, aperçu et téléchargement contrôlés |
 | `administration` | API d'administration fonctionnelle : organisation, comptes, affectations, rôles, délégations, journal des connexions, revue des habilitations, tableau de bord |
 | `config` | Paramètres par environnement (`dev`, `test`, `prod`), routes de l'API, sécurité HTTP |
 | `frontend/` | Interface Angular : connexion en étapes, Mon compte, administration ; français et arabe à chaud (RTL), animations, accessibilité |
@@ -64,7 +65,8 @@ python manage.py dictionnaire_donnees ../docs/ged/dictionnaire-donnees.md   # ap
 ```
 
 Pour tester aussi les droits du rôle applicatif, créer un rôle PostgreSQL et lancer
-`GED_DB_ROLE_APPLICATIF=nom_du_role python -m pytest --create-db`.
+`GED_DB_ROLE_APPLICATIF=nom_du_role python -m pytest --create-db`. Le test contre un vrai ClamAV ne s'exécute que
+si `GED_TEST_CLAMAV=<hôte de clamd>` est défini.
 
 Après tout ajout de message d'API : `python manage.py makemessages -l ar --no-location --no-obsolete -i "frontend/*"`,
 traduire dans `locale/ar/LC_MESSAGES/django.po`, puis `compilemessages`. L'intégration continue échoue si une traduction manque.
@@ -85,6 +87,8 @@ Parcours de recette de bout en bout (navigateur réel, base neuve avec `initiali
 
 ```bash
 GED_URL=http://localhost:4200 GED_MOT_DE_PASSE=<mot de passe temporaire> CHROMIUM=<chemin de Chrome> npm run e2e
+# Documents (lot 3) : un agent qui peut créer des documents, et un type avec une métadonnée « urgence »
+GED_URL=https://localhost:8443 GED_IDENTIFIANT=<agent> GED_MOT_DE_PASSE=<mot de passe temporaire> CHROMIUM=<chemin de Chrome> node e2e/parcours-documents.mjs
 ```
 
 ## Installation sur serveur (recette ou production)
@@ -110,6 +114,14 @@ Un superadministrateur technique (`createsuperuser`) n'est utile que pour l'admi
 Le service `nginx` est construit à partir de `docker/nginx/Dockerfile` : il compile l'interface Angular puis la sert,
 avec une politique de sécurité du contenu (CSP) stricte dont le nonce change à chaque réponse, et relaie `/api/`,
 `/administration-technique/`, `/sante/` et `/institution/` vers Django.
+
+Le service `analyseur` (même image, commande `analyser_fichiers --boucle`) analyse les fichiers déposés en
+quarantaine : antivirus ClamAV (service `antivirus`), empreinte SHA-256 recalculée, type réel contrôlé de nouveau,
+puis publication ou refus. Tant qu'il n'a pas rendu son verdict, un fichier n'est ni téléchargeable ni affichable.
+Le service `antivirus` est le seul autorisé à sortir du réseau interne, pour mettre à jour ses signatures ; sur un
+réseau isolé, configurer un miroir interne (`FRESHCLAM_CONF_DatabaseMirror`). Il occupe environ 1,3 Go de mémoire.
+La production exige `GED_ANTIVIRUS_HOTE` ; en développement, sans cette variable, les fichiers sont publiés sans
+analyse antivirus (l'audit le signale) et `python manage.py analyser_fichiers` traite la file à la demande.
 
 Au démarrage, le conteneur `web` applique les migrations avec le rôle propriétaire du schéma, puis sert l'application
 avec le rôle applicatif, qui n'a aucun droit sur la structure et ne peut ni modifier ni supprimer le journal d'audit.
@@ -141,12 +153,27 @@ Toutes sont documentées dans [`.env.exemple`](.env.exemple). Les plus important
 | `GED_ADMIN_URL` | Préfixe de l'administration technique |
 | `GED_AUDIT_SCELLEMENT_DIR` | Répertoire d'export des scellements du journal |
 
-### Stockage S3 : point d'attention
+### Stockage S3
 
-L'application n'utilise que l'API S3 standard. L'image MinIO proposée par défaut est configurable (`GED_IMAGE_S3`) :
-MinIO a cessé fin 2025 de publier des images de son édition communautaire, et l'étiquette par défaut n'a pas pu être
-vérifiée lors de l'écriture de ce lot. Avant la recette, choisir et figer l'image du service S3 retenu par l'institution
-(MinIO construit depuis ses sources, Garage, SeaweedFS ou un stockage S3 interne existant).
+L'application n'utilise que l'API S3 standard. Compose fournit **SeaweedFS** (licence Apache 2.0, image figée
+`chrislusf/seaweedfs:4.47`), démarré par `docker/stockage/demarrer.sh` avec une seule identité S3, celle de
+l'application, tirée de `GED_S3_ACCESS_KEY` et `GED_S3_SECRET_KEY`. MinIO, prévu à l'origine, n'est plus utilisable :
+ses images `quay.io/minio/minio` et `minio/minio` ne sont plus distribuées (constaté le 25 octobre 2026).
+Pour utiliser le stockage S3 existant de l'institution, retirer le service `stockage` et faire pointer
+`GED_S3_ENDPOINT` vers lui.
+
+### Installation locale sous Windows (Docker Desktop)
+
+Vérifiée le 25 octobre 2026 sous Windows 10 avec Docker Desktop (moteur 20.10, Compose 2.13) :
+
+- Le fichier `.gitattributes` du dépôt garde en LF les scripts exécutés dans les conteneurs ; avec
+  `core.autocrlf=true`, un clone antérieur à ce fichier doit être réextrait, sinon `entrypoint.sh` échoue.
+- Les ports 80 et 443 sont souvent pris par Windows (IIS, http.sys) : régler `GED_PORT_HTTP` et `GED_PORT_HTTPS`
+  (par exemple 8088 et 8443), `GED_ALLOWED_HOSTS=localhost` et `GED_CSRF_TRUSTED_ORIGINS=https://localhost:8443`,
+  puis ouvrir directement https://localhost:8443 (la redirection depuis HTTP vise le port 443).
+- Certificat de recette : `generer-certificat-recette.sh localhost`. Si OpenSSL signale un `openssl.cnf`
+  introuvable, une variable `OPENSSL_CONF` laissée par un autre logiciel pointe vers un fichier absent : la redéfinir
+  pour la commande.
 
 ## Interfaces
 
@@ -157,7 +184,8 @@ Pages de l'interface Angular (servies par Nginx, ou par `npm start` en développ
 | `/connexion` | Connexion en étapes : mot de passe, code de double authentification ou activation, codes de secours |
 | `/` | Tableau de bord : indicateurs du périmètre, raccourcis |
 | `/compte`, `/compte/mot-de-passe`, `/compte/double-authentification` | Mon compte : langue, sécurité, affectations, délégations, sessions |
-| `/administration/organisation`, `/postes`, `/utilisateurs`, `/roles`, `/connexions` | Administration (selon les droits) |
+| `/documents`, `/documents/nouveau`, `/documents/<uuid>` | Documents : liste filtrée, enregistrement avec dépôt du fichier, fiche (versions, aperçu, téléchargement, relations, doublons) |
+| `/administration/organisation`, `/postes`, `/utilisateurs`, `/roles`, `/types-document`, `/connexions` | Administration (selon les droits) |
 
 Adresses servies par Django :
 
@@ -165,7 +193,8 @@ Adresses servies par Django :
 |---|---|
 | `/api/v1/session/…` | Session : état, connexion, vérification du code, activation de la double authentification, déconnexion |
 | `/api/v1/compte/…` | Mon compte : préférences, mot de passe, double authentification, sessions, délégations |
-| `/api/v1/administration/…` | Unités, types, postes, utilisateurs, affectations, rôles, journal des connexions, revue CSV |
+| `/api/v1/administration/…` | Unités, types, postes, utilisateurs, affectations, rôles, types de documents, journal des connexions, revue CSV |
+| `/api/v1/documents/…` | Documents : liste et création (multipart), options, fiche, versions, pièces jointes, relations, aperçu et téléchargement des fichiers |
 | `/api/v1/tableau-de-bord/`, `/api/v1/institution/` | Indicateurs, institution courante |
 | `/api/schema/` | Schéma OpenAPI de l'API (connexion requise) |
 | `/sante/` | Sonde de supervision (base de données joignable) |

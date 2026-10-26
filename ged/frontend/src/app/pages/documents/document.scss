@@ -1,0 +1,142 @@
+.pastilles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -8px 0 20px;
+}
+.alerte-doublons {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  border-color: color-mix(in srgb, var(--ged-avertissement) 40%, var(--ged-bordure));
+  background: color-mix(in srgb, var(--ged-avertissement) 6%, var(--ged-surface));
+  mat-icon {
+    color: var(--ged-avertissement);
+    flex: none;
+  }
+  ul {
+    margin: 4px 0 0;
+    padding-inline-start: 18px;
+  }
+}
+.mise-en-page {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  align-items: start;
+}
+@media (max-width: 959px) {
+  .mise-en-page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.titre-section {
+  margin-bottom: 12px;
+}
+.version {
+  margin: 0 0 12px;
+  font-size: 13px;
+}
+.fichiers,
+.relations {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.fichier {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--ged-bordure);
+  border-radius: 12px;
+}
+.icone {
+  color: var(--ged-primaire);
+  flex: none;
+}
+.infos {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+}
+.nom {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.empreinte {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: var(--ged-texte-attenue);
+}
+.etat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.actions {
+  display: flex;
+  flex: none;
+}
+.apercu img {
+  display: block;
+  max-width: 100%;
+  max-height: 70vh;
+  margin: 0 auto;
+  border-radius: 8px;
+  border: 1px solid var(--ged-bordure);
+}
+.historique {
+  margin-top: 16px;
+  summary {
+    cursor: pointer;
+    color: var(--ged-primaire);
+    font-weight: 500;
+  }
+  ol {
+    margin: 12px 0 0;
+    padding-inline-start: 20px;
+    display: grid;
+    gap: 8px;
+    font-size: 13px;
+  }
+  ul {
+    margin: 4px 0 0;
+    padding-inline-start: 16px;
+  }
+}
+.relations li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.fiche dl {
+  display: grid;
+  grid-template-columns: minmax(110px, auto) 1fr;
+  gap: 10px 16px;
+  margin: 16px 0;
+}
+.fiche dt {
+  color: var(--ged-texte-attenue);
+  font-size: 13px;
+}
+.fiche dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.objet {
+  white-space: pre-line;
+}

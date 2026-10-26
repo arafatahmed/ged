@@ -12,6 +12,7 @@ const DROITS_VIDES: Droits = {
   utilisateurs: false,
   roles: false,
   connexions: false,
+  types_document: false,
 };
 
 /** État de la session côté frontend, source unique pour la coque, les gardes et les pages. */
@@ -28,6 +29,7 @@ export class SessionService {
   readonly institution = computed(() => this.etat()?.institution ?? null);
   readonly droits = computed<Droits>(() => this.etat()?.droits ?? DROITS_VIDES);
   readonly administration = computed(() => Object.values(this.droits()).some(Boolean));
+  readonly documents = computed(() => this.etat()?.documents ?? { consulter: false, creer: false });
   readonly exigences = computed(() => this.etat()?.exigences ?? { changer_mot_de_passe: false, activer_mfa: false });
 
   /** Charge la session une fois (au démarrage) ; les appels suivants réutilisent le résultat. */

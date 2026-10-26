@@ -11,6 +11,10 @@ appelées depuis une migration (modèles historiques).
 
 from django.utils.translation import gettext_lazy as _
 
+# Les cases « P » de la matrice (objets propres) sont des permissions distinctes, suffixées
+# « _propres » : elles ne s'exercent que sur les objets créés par l'utilisateur.
+SUFFIXE_PROPRES = "_propres"
+
 # Les permissions « administration.* » ne peuvent être ni déléguées, ni attribuées
 # par quelqu'un qui ne les détient pas lui-même (règle anti-escalade).
 PREFIXE_ADMINISTRATION = "administration."
@@ -29,8 +33,11 @@ PERMISSIONS = [
     ("document.consulter", _("Documents"), _("Consulter les documents et leur contenu")),
     ("document.consulter_metadonnees", _("Documents"), _("Consulter les fiches descriptives sans le contenu")),
     ("document.telecharger", _("Documents"), _("Télécharger le fichier original")),
+    ("document.telecharger_propres", _("Documents"), _("Télécharger le fichier original de ses propres documents")),
     ("document.modifier", _("Documents"), _("Modifier les métadonnées")),
+    ("document.modifier_propres", _("Documents"), _("Modifier les métadonnées de ses propres documents")),
     ("document.versionner", _("Documents"), _("Ajouter une version")),
+    ("document.versionner_propres", _("Documents"), _("Ajouter une version à ses propres documents")),
     ("document.confidentialite", _("Documents"), _("Changer le niveau de confidentialité")),
     ("dossier.gerer", _("Dossiers"), _("Créer, alimenter et clôturer un dossier")),
     ("dossier.rouvrir", _("Dossiers"), _("Rouvrir un dossier clos")),
@@ -75,7 +82,7 @@ ROLES_INITIAUX = [
             "document.creer",
             "document.consulter",
             "document.telecharger",
-            "document.modifier",
+            "document.modifier_propres",
             "dossier.gerer",
             "transmission.emettre",
         ],
@@ -88,9 +95,9 @@ ROLES_INITIAUX = [
         "permissions": [
             "document.creer",
             "document.consulter",
-            "document.telecharger",
-            "document.modifier",
-            "document.versionner",
+            "document.telecharger_propres",
+            "document.modifier_propres",
+            "document.versionner_propres",
             "document.confidentialite",
             "dossier.gerer",
             "transmission.emettre",

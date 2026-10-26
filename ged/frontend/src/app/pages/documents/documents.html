@@ -1,0 +1,120 @@
+<ged-entete-page [titre]="'documents.titre' | t" [sousTitre]="'documents.sous_titre' | t" icone="folder_open">
+  @if (session.documents().creer) {
+    <a mat-flat-button routerLink="/documents/nouveau"><mat-icon>note_add</mat-icon>{{ 'documents.nouveau' | t }}</a>
+  }
+</ged-entete-page>
+
+<div class="carte filtres" animate.enter="entree-montee">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="recherche">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>{{ 'documents.rechercher' | t }}</mat-label>
+    <input matInput [ngModel]="recherche()" (ngModelChange)="recherche.set($event)" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ 'documents.type' | t }}</mat-label>
+    <mat-select [value]="type()" (selectionChange)="filtrer('type', $event.value)">
+      <mat-option value="">{{ 'documents.tous_types' | t }}</mat-option>
+      @for (t of options()?.types ?? []; track t.uuid) {
+        <mat-option [value]="t.uuid">{{ t.libelle_fr | bilingue: t.libelle_ar }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ 'champ.statut' | t }}</mat-label>
+    <mat-select [value]="statut()" (selectionChange)="filtrer('statut', $event.value)">
+      <mat-option value="">{{ 'documents.tous_statuts' | t }}</mat-option>
+      <mat-option value="brouillon">{{ 'statut.brouillon' | t }}</mat-option>
+      <mat-option value="valide">{{ 'statut.valide' | t }}</mat-option>
+      <mat-option value="archive">{{ 'statut.archive' | t }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ 'documents.trier' | t }}</mat-label>
+    <mat-select [value]="tri()" (selectionChange)="filtrer('tri', $event.value)">
+      <mat-option value="">{{ 'documents.tri_recents' | t }}</mat-option>
+      <mat-option value="titre">{{ 'documents.tri_titre' | t }}</mat-option>
+      <mat-option value="-date">{{ 'documents.tri_date' | t }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="tableau-conteneur resultats">
+  @if (chargement()) {
+    <mat-progress-bar mode="indeterminate" class="progression" />
+  }
+  @if (page(); as p) {
+    @if (p.resultats.length) {
+      <table mat-table [dataSource]="p.resultats">
+        <ng-container matColumnDef="titre">
+          <th mat-header-cell *matHeaderCellDef>{{ 'documents.titre_document' | t }}</th>
+          <td mat-cell *matCellDef="let d">
+            <strong>{{ d.titre }}</strong>
+            @if (d.reference) {
+              <span class="texte-attenue reference ltr">{{ d.reference }}</span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>{{ 'documents.type' | t }}</th>
+          <td mat-cell *matCellDef="let d">{{ d.type_libelle | bilingue: d.type_libelle_ar }}</td>
+        </ng-container>
+        <ng-container matColumnDef="unite">
+          <th mat-header-cell *matHeaderCellDef>{{ 'champ.unite' | t }}</th>
+          <td mat-cell *matCellDef="let d" class="texte-attenue">
+            {{ d.unite_libelle | bilingue: d.unite_libelle_ar }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="confidentialite">
+          <th mat-header-cell *matHeaderCellDef>{{ 'documents.confidentialite' | t }}</th>
+          <td mat-cell *matCellDef="let d"><ged-pastille-confidentialite [valeur]="d.confidentialite" /></td>
+        </ng-container>
+        <ng-container matColumnDef="fichier">
+          <th mat-header-cell *matHeaderCellDef>{{ 'documents.fichier' | t }}</th>
+          <td mat-cell *matCellDef="let d">
+            @if (d.fichier; as f) {
+              <span class="fichier">
+                <span class="format ltr">{{ f.format }}</span>
+                @if (d.version > 1) {
+                  <span class="texte-attenue">v{{ d.version }}</span>
+                }
+                @if (f.etat !== 'sain') {
+                  <ged-etat-fichier [valeur]="f.etat" />
+                }
+              </span>
+            } @else {
+              <span class="texte-attenue">—</span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>{{ 'documents.cree_le' | t }}</th>
+          <td mat-cell *matCellDef="let d" class="texte-attenue">{{ d.cree_le | dateLocale: 'court' }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="colonnes"></tr>
+        <tr
+          mat-row
+          *matRowDef="let d; columns: colonnes; let i = index"
+          class="ligne-cliquable"
+          tabindex="0"
+          (click)="ouvrir(d)"
+          (keydown.enter)="ouvrir(d)"
+          animate.enter="entree-montee"
+          [style.--rang]="i"
+        ></tr>
+      </table>
+      <mat-paginator
+        [length]="p.nombre"
+        [pageSize]="25"
+        [pageIndex]="p.page - 1"
+        [hidePageSize]="true"
+        (page)="changerPage($event)"
+      />
+    } @else {
+      <ged-etat-vide icone="find_in_page" [message]="'documents.aucun' | t">
+        @if (session.documents().creer && !recherche()) {
+          <a mat-stroked-button routerLink="/documents/nouveau">{{ 'documents.nouveau' | t }}</a>
+        }
+      </ged-etat-vide>
+    }
+  }
+</div>

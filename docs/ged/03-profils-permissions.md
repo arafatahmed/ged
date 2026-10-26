@@ -56,6 +56,8 @@ Les libellés réglementaires exacts dépendent de l'institution et du droit app
 
 Légende : **O** autorisé dans le périmètre ; **A** seulement sur les objets affectés ou transmis à l'utilisateur ; **P** seulement sur ses propres objets ; **—** interdit. Le périmètre et la confidentialité s'appliquent toujours en plus.
 
+Dans le code (lot 3), une case « P » est une permission distincte suffixée `_propres` (par exemple `document.telecharger_propres`), qui ne s'exerce que sur les objets créés par l'utilisateur. Les cases « A » s'appuieront sur les accès explicites du lot 7.
+
 | Permission | Sup. tech. | Adm. fonct. | Adm. unité | Bureau d'ordre | Producteur | Traitant | Validateur | Archiviste | Auditeur | Consult. |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Paramètres techniques | O | — | — | — | — | — | — | — | — | — |

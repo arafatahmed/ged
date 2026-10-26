@@ -51,7 +51,7 @@ jobs:
         run: |
           python manage.py check
           python manage.py makemigrations --check --dry-run
-          DJANGO_SETTINGS_MODULE=config.settings.prod GED_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(50))')" GED_ALLOWED_HOSTS=ged.example python manage.py check --deploy --fail-level WARNING
+          DJANGO_SETTINGS_MODULE=config.settings.prod GED_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(50))')" GED_ALLOWED_HOSTS=ged.example GED_ANTIVIRUS_HOTE=antivirus python manage.py check --deploy --fail-level WARNING
       - name: Traductions (tout nouveau texte doit être traduit en arabe)
         run: |
           python manage.py makemessages -l ar --no-location --no-obsolete -i "staticfiles/*"

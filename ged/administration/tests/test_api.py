@@ -65,6 +65,7 @@ class TestDroits:
             "utilisateurs": True,
             "roles": True,
             "connexions": True,
+            "types_document": True,
         }
         assert not any(client_agent.get("/api/v1/session/").json()["droits"].values())
 
@@ -281,7 +282,7 @@ class TestUtilisateurs:
 class TestRoles:
     def test_liste_et_catalogue(self, client_admin):
         donnees = client_admin.get(API + "/roles/").json()
-        assert len(donnees["roles"]) == 9 and len(donnees["permissions"]) == 20
+        assert len(donnees["roles"]) == 9 and len(donnees["permissions"]) == 23
 
     def test_creer_un_role(self, client_admin):
         reponse = appel(

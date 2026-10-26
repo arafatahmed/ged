@@ -46,7 +46,7 @@
 2. **Code dans le sous-dossier `ged/` de ce dépôt**, et non dans un dépôt dédié (hypothèse H2 non tranchée). Le déplacement vers un dépôt dédié reste simple tant que le code est jeune.
 3. **Identifiant de connexion unique sur toute l'installation** (au lieu d'unique par institution), pour que la connexion ne demande pas l'institution. Le document 04 a été mis à jour.
 4. **Celery n'est pas encore installé** : aucun traitement asynchrone n'est nécessaire au lot 1. Le scellement de l'audit est une commande à planifier (cron). Celery arrivera au lot 3 (antivirus, aperçus).
-5. **Image MinIO non vérifiée** : MinIO a cessé de publier les images de son édition communautaire fin 2025. L'image est configurable (`GED_IMAGE_S3`) et l'application n'utilise que l'API S3 standard ; l'institution doit choisir son service S3 avant la recette.
+5. **Image MinIO non vérifiée** : MinIO a cessé de publier les images de son édition communautaire fin 2025. L'image est configurable (`GED_IMAGE_S3`) et l'application n'utilise que l'API S3 standard ; l'institution doit choisir son service S3 avant la recette. **Résolu** : les images MinIO ne sont plus distribuées ; Compose fournit SeaweedFS 4.47, vérifié par une installation locale le 25 octobre 2026.
 6. **Écritures d'audit sérialisées** : un verrou PostgreSQL ordonne la chaîne et reste tenu jusqu'à la fin de chaque transaction qui journalise. C'est adapté aux volumes visés (hypothèse H4) ; à mesurer lors des tests de charge du lot 11.
 
 ## Limites restantes

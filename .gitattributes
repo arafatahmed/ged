@@ -1,0 +1,12 @@
+# Fichiers exécutés ou lus dans des conteneurs Linux : toujours en LF,
+# même sur un poste Windows configuré avec core.autocrlf=true.
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.conf text eol=lf
+*.py text eol=lf
+# Sources du frontend : Prettier impose LF (npm run format:verifier).
+*.ts text eol=lf
+*.html text eol=lf
+*.scss text eol=lf
+
+*.png binary

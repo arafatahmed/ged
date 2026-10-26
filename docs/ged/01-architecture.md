@@ -13,7 +13,7 @@ flowchart LR
     N -->|/api| A[API Django + DRF<br/>Gunicorn]
     A --> P[(PostgreSQL<br/>métadonnées, audit,<br/>recherche plein texte)]
     A --> R[(Redis<br/>file de tâches, cache,<br/>limitation de débit)]
-    A --> S[(Stockage objet S3<br/>MinIO, buckets privés)]
+    A --> S[(Stockage objet S3<br/>SeaweedFS, buckets privés)]
     W[Workers Celery<br/>antivirus, OCR, aperçus,<br/>notifications, échéances] --> P
     W --> S
     W --> C[ClamAV]
@@ -65,7 +65,7 @@ Règle de dépendance : un module ne lit pas les tables d'un autre, il appelle s
 | Backend | Python 3.12, Django 5.2 LTS, Django REST Framework | ORM et migrations matures, administration, sécurité par défaut (CSRF, échappement, requêtes paramétrées), compétences disponibles, support long | Java Spring : plus lourd à maintenir pour une petite équipe ; reprendre la pile de la GRH (Java 7, JSF 1.2) est exclu, elle n'est plus maintenue |
 | Frontend | Angular 21 (composants autonomes, signaux, sans zone.js), TypeScript strict, Angular Material 3 | Typage, structure imposée utile en équipe, prise en charge RTL du CDK ; traduction FR/AR changeable à chaud (dictionnaires typés), animations natives (`animate.enter`, View Transitions) ; polices et icônes auto-hébergées ; CSP stricte avec nonce. Confirmé par le commanditaire après le lot 2 | Gabarits Django (utilisés aux lots 1 et 2, remplacés) |
 | Base de données | PostgreSQL 16 | Transactions, verrous de ligne pour la numérotation, recherche plein texte, sécurité au niveau des lignes (RLS) pour le mode multi-institutions, JSONB pour les métadonnées personnalisées | MySQL : RLS et plein texte moins adaptés |
-| Stockage des fichiers | Stockage objet S3, MinIO en local | Volume extensible indépendamment de la base, versionnage et verrouillage d'objets (WORM) disponibles, réplication | Fichiers en base : sauvegardes énormes ; disque local : pas de réplication ni d'immutabilité |
+| Stockage des fichiers | Stockage objet S3, SeaweedFS en local (MinIO prévu à l'origine, plus distribué) | Volume extensible indépendamment de la base, versionnage et verrouillage d'objets (WORM) disponibles, réplication | Fichiers en base : sauvegardes énormes ; disque local : pas de réplication ni d'immutabilité |
 | Recherche plein texte | PostgreSQL (`tsvector`, `pg_trgm`) | Suffisant jusqu'à quelques millions de documents ; les permissions s'appliquent dans la même requête SQL, sans risque de désynchronisation | OpenSearch : à n'ajouter que si les mesures du lot 6 montrent des temps de réponse insuffisants ; il impose de répliquer les droits dans l'index |
 | OCR | Tesseract 5 via OCRmyPDF, langues `fra` et `ara` | Libre, exécuté sur place (aucun document ne sort), produit des PDF/A avec couche texte | Services OCR en nuage : interdits pour les documents confidentiels sauf autorisation explicite |
 | Antivirus | ClamAV (démon `clamd`) | Libre, sur place, intégrable dans la chaîne de quarantaine | — |
@@ -87,7 +87,7 @@ Valeurs à confirmer (hypothèse H4). Sur la base de 300 utilisateurs, 50 utilis
 | Volume de fichiers | environ 100 Go par an, 1 To sur 10 ans, hors aperçus (prévoir 30 % de plus) et hors copies de sauvegarde |
 | Base PostgreSQL | quelques Go par an (métadonnées, texte OCR, audit) |
 | Serveur applicatif | 8 vCPU, 16 Go de RAM (API, workers, Redis) ; l'OCR est le poste le plus consommateur en CPU |
-| Serveur données | 4 vCPU, 16 Go de RAM, disques SSD pour PostgreSQL, disques capacitifs pour MinIO |
+| Serveur données | 4 vCPU, 16 Go de RAM, disques SSD pour PostgreSQL, disques capacitifs pour le stockage S3 |
 
 Une installation sur un seul serveur est possible pour la recette et pour une petite institution.
 
@@ -132,7 +132,7 @@ Un utilisateur appartient à une seule institution. Le superadministrateur techn
 | Perte de données | Sauvegardes chiffrées, hors site, testées par restauration périodique (voir 1.9) |
 | Secrets | Fichiers de secrets Docker ou coffre de l'institution ; aucun secret dans le dépôt ; rotation documentée |
 | Transport | HTTPS obligatoire (HSTS), TLS 1.2 minimum ; flux internes chiffrés si les composants sont sur des machines différentes |
-| Données au repos | Chiffrement des volumes (LUKS) ou chiffrement côté serveur de MinIO ; sauvegardes chiffrées avec une clé conservée séparément |
+| Données au repos | Chiffrement des volumes (LUKS) ou chiffrement côté serveur du stockage S3 ; sauvegardes chiffrées avec une clé conservée séparément |
 
 ## 1.9 Sauvegarde et restauration
 

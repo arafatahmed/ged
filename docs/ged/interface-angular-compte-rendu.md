@@ -41,13 +41,13 @@ Captures (production, CSP active) : [connexion](captures/connexion.png), [double
 |---|---|
 | Tests backend (pytest, PostgreSQL), dont l'API complète | 240 réussis, 1 ignoré sans rôle applicatif, couverture 94 % |
 | Tests frontend (Vitest) : traduction et paramètres des traductions, dates, session, gardes, intercepteurs, pagination | 18 réussis ; ils ont révélé et fait corriger un défaut (garde appelant `inject()` après un `await`) |
-| Compilation de production Angular (types stricts dans les gabarits, traductions complètes imposées par le compilateur) | Réussie ; 497 ko au chargement initial (120 ko compressés), pages chargées à la demande |
+| Compilation de production Angular (types stricts dans les gabarits, traductions complètes imposées par le compilateur) | Réussie ; pages chargées à la demande. Le chargement initial mesuré lors du déploiement local du 25 octobre 2026 est de 722 ko (168 ko compressés), et non 497 ko comme indiqué d'abord |
 | Parcours de bout en bout dans Chromium sur le build de production, derrière un frontal reproduisant la CSP et le nonce de Nginx | 8 étapes réussies, aucune violation de CSP ni erreur Angular ; parcours étendu (23 écrans) joué en français, en arabe et sur mobile |
 | `docker compose config` | Valide. Les images n'ont pas été construites (pas de démon Docker dans l'environnement de développement) |
 
 ## Limites et suites
 
-- Construction des images Docker et installation complète sur un serveur de recette : à faire (critère restant du lot 1).
+- Construction des images Docker et installation complète : **faites en local** le 25 octobre 2026 (Windows 10, Docker Desktop) ; parcours vérifié jusqu'à l'étape d'activation de la double authentification. Reste l'installation sur le serveur de recette de l'institution.
 - Défaut connu d'Angular 21.2 : deux composants aux styles en ligne strictement identiques empêchent `ng build` de rendre la main (le service esbuild reste ouvert). Les styles communs vont donc dans `src/styles.scss`.
 - Les champs de date utilisent le sélecteur natif du navigateur, qui suit la langue du navigateur et non celle de l'interface.
 - Le parcours de bout en bout (`npm run e2e`) n'est pas encore joué en intégration continue : il demande Django, une base neuve et un navigateur.

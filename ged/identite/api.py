@@ -24,6 +24,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from acces import documents as acces_documents
 from acces import moteur
 from audit.models import Resultat
 from audit.services import journaliser
@@ -64,6 +65,15 @@ def droits_menu(utilisateur):
         "utilisateurs": moteur.a_permission(utilisateur, "administration.utilisateurs"),
         "roles": moteur.portee_institution(utilisateur, "administration.roles"),
         "connexions": moteur.portee_institution(utilisateur, "audit.consulter"),
+        "types_document": moteur.portee_institution(utilisateur, "administration.institution"),
+    }
+
+
+def droits_documents(utilisateur):
+    codes_lecture = (acces_documents.CONSULTER, acces_documents.METADONNEES, acces_documents.CREER)
+    return {
+        "consulter": any(moteur.a_permission(utilisateur, code) for code in codes_lecture),
+        "creer": moteur.a_permission(utilisateur, acces_documents.CREER),
     }
 
 
@@ -108,6 +118,7 @@ def etat_session(request):
             "activer_mfa": not utilisateur.mfa_active and mfa.mfa_requise(utilisateur),
         },
         "droits": droits_menu(utilisateur),
+        "documents": droits_documents(utilisateur),
     }
 
 

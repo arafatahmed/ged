@@ -1,8 +1,8 @@
 """Matrice des rôles initiaux (document 03, tableau 3.5).
 
-Seules les cases « O » (autorisé dans le périmètre) sont des permissions de
-rôle. Les cases « A » (objets affectés) et « P » (objets propres) relèvent de
-règles par objet, testées avec les modules concernés (lots 3 et suivants).
+Les cases « O » (autorisé dans le périmètre) sont des permissions de rôle ; les
+cases « P » (objets propres) sont les permissions suffixées « _propres » (lot 3).
+Les cases « A » (objets affectés) relèvent des accès explicites (lot 7).
 Cette matrice est écrite indépendamment du catalogue : toute divergence entre
 le document et le code fait échouer le test.
 """
@@ -28,16 +28,16 @@ MATRICE = {
         "document.creer",
         "document.consulter",
         "document.telecharger",
-        "document.modifier",
+        "document.modifier_propres",
         "dossier.gerer",
         "transmission.emettre",
     },
     "producteur": {
         "document.creer",
         "document.consulter",
-        "document.telecharger",
-        "document.modifier",
-        "document.versionner",
+        "document.telecharger_propres",
+        "document.modifier_propres",
+        "document.versionner_propres",
         "document.confidentialite",
         "dossier.gerer",
         "transmission.emettre",
@@ -99,7 +99,7 @@ def test_catalogue_synchronise(institution):
 
     synchroniser_permissions(Permission)
     assert not Permission.objects.get(code="obsolete.permission").actif
-    assert Permission.objects.filter(actif=True).count() == 20
+    assert Permission.objects.filter(actif=True).count() == 23
 
 
 @pytest.mark.django_db

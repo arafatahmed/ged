@@ -1,0 +1,43 @@
+.mise-en-page {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  align-items: start;
+}
+@media (max-width: 959px) {
+  .mise-en-page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+h2 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+h3 {
+  margin: 8px 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ged-texte-attenue);
+}
+.depot {
+  display: grid;
+  gap: 12px;
+}
+.aide {
+  margin: 0;
+  font-size: 13px;
+}
+.large {
+  grid-column: 1 / -1;
+}
+.erreur {
+  color: var(--ged-alerte);
+  margin: 0 0 12px;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
